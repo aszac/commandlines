@@ -1,20 +1,15 @@
 package uk.ac.reading.tq011338.commandlines;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import uk.ac.reading.tq011338.state.*;
-
 public class ActionFigure implements WorldObject {
-	private int x; // x coordinate
-	private int y; // y coordinate
+	protected int x; // x coordinate
+	protected int y; // y coordinate
 	private boolean selected = false;
 
 	private String command = new String();
 
 	private int hitPoints;
 
-	private FigureState state;
+	protected State state;
 
 	/**
 	 * Used for direction of motion for an action figure
@@ -23,6 +18,10 @@ public class ActionFigure implements WorldObject {
 	public enum Direction { // movement direction
 		// TODO change to private
 		UP, DOWN, RIGHT, LEFT
+	}
+
+	public enum State {
+		ATTACK, MOVE, DEFEND, HEAL
 	}
 
 	/**
@@ -38,6 +37,7 @@ public class ActionFigure implements WorldObject {
 		this.y = y;
 		command = "";
 		hitPoints = 100;
+		this.state = State.MOVE;
 	}
 
 	/**
@@ -50,8 +50,8 @@ public class ActionFigure implements WorldObject {
 	 *            - number of steps to take
 	 */
 	public void move(Direction direction, int numberOfSteps) {
-		
-		state = new MoveState();
+
+		state = State.MOVE;
 
 		while (numberOfSteps > 0) { // performing one step at a time
 			// check if action figure stepping out of the grid
@@ -135,43 +135,18 @@ public class ActionFigure implements WorldObject {
 
 	}
 
-	/**
-	 * Find the closest enemy to attack
-	 * 
-	 * @return
-	 */
-	private ActionFigure findClosestEnemy() {
-		List<ActionFigure> enemyList = new ArrayList<ActionFigure>();
-		ActionFigure closestEnemy = null;
-		double closestDistance = 100;
-
-		// create enemy list
-		for (int i = 0; i < TheGame.worldMap.length; i++) {
-			for (int j = 0; j < TheGame.worldMap.length; j++) {
-				if (TheGame.worldMap[i][j] instanceof ActionFigure) {
-					enemyList.add((ActionFigure) TheGame.worldMap[i][j]);
-				}
-			}
+	public boolean checkIfEnemyInGrid(int x, int y) {
+		if (TheGame.worldMap[x][y] instanceof ActionFigure) {
+			return true;
+		} else {
+			return false;
 		}
-
-		// find the Manhattan distance of the target
-		for (ActionFigure figure : enemyList) {
-			double distance = Math.sqrt(Math.pow(figure.x - x, 2)
-					+ Math.pow(figure.y - y, 2));
-			if (distance < closestDistance) {
-				closestDistance = distance;
-				closestEnemy = figure;
-			}
-		}
-
-		return closestEnemy;
 	}
 
 	public void attack(Direction direction, int force) {
-		
+
 		// TODO reduce turns
-		
-		state = new AttackState();
+		state = State.ATTACK;
 
 		if (!checkIfOutOfBounds(direction)) {
 			// check if enemy present in the field && hit
@@ -207,34 +182,25 @@ public class ActionFigure implements WorldObject {
 		}
 
 	}
-	
+
 	public void defend() {
 		// TODO if enough action points defend
-		
-		state = new DefendState();
+
+		state = State.DEFEND;
 	}
-	
-	public void heal (int times) {
-		state = new RecoverState();
-		
+
+	public void heal(int times) {
+		state = State.HEAL;
+
 		// TODO if enough action points
 		if (hitPoints < 100) {
 			hitPoints = hitPoints + times * 10;
 		}
-		
 	}
 
 	public void checkIfKilled(int x, int y) {
 		if (TheGame.worldMap[x][y].getHitPoints() <= 0) {
 			TheGame.worldMap[x][y] = null;
-		}
-	}
-
-	public boolean checkIfEnemyInGrid(int x, int y) {
-		if (TheGame.worldMap[x][y] instanceof ActionFigure) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 
@@ -277,11 +243,11 @@ public class ActionFigure implements WorldObject {
 		this.command = command;
 	}
 
-	public FigureState getState() {
+	public State getState() {
 		return state;
 	}
 
-	public void setState(FigureState state) {
+	public void setState(State state) {
 		this.state = state;
 	}
 
@@ -291,6 +257,12 @@ public class ActionFigure implements WorldObject {
 
 	public void reduceHitPoints(int hitPoints) {
 		this.hitPoints = this.hitPoints - hitPoints;
+	}
+
+	@Override
+	public void decideOnNextMove() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

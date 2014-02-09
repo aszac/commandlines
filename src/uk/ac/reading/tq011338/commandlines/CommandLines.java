@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import uk.ac.reading.tq011338.parser.CommandLinesLexer;
 import uk.ac.reading.tq011338.parser.CommandLinesParser;
-import uk.ac.reading.tq011338.parser.ExtractInterfaceListener;
+import uk.ac.reading.tq011338.parser.ExtendedCommandLinesBaseVisitor;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -48,20 +48,18 @@ public class CommandLines extends Activity {
 					return;
 
 				// parses the commend and executes the code on the object
-				CharStream cs = new ANTLRInputStream("figure."
-						+ mCommandView.getText().toString());
+				CharStream cs = new ANTLRInputStream(mCommandView.getText().toString());
 				CommandLinesLexer lexer = new CommandLinesLexer(cs);
 				CommonTokenStream tokens = new CommonTokenStream(lexer);
 				CommandLinesParser parser = new CommandLinesParser(tokens);
 				
 				// check if input has parsing errors
-					ParserRuleContext tree = parser.move();
+					ParserRuleContext tree = parser.parse();
 					if (parser.getNumberOfSyntaxErrors() == 0) {
 
 					ParseTreeWalker walker = new ParseTreeWalker();
-					ExtractInterfaceListener extractor = new ExtractInterfaceListener(
-							parser, figure);
-					walker.walk(extractor, tree);
+					ExtendedCommandLinesBaseVisitor visitor = new ExtendedCommandLinesBaseVisitor(figure);
+					visitor.visit(tree);
 				}
 
 				figure.setCommand("");

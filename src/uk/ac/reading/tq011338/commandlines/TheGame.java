@@ -1,7 +1,6 @@
 package uk.ac.reading.tq011338.commandlines;
 
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -20,10 +19,15 @@ public class TheGame extends GameThread {
 	private Bitmap mGridTile;
 	private Bitmap mStone;
 	private Bitmap mTree;
-	
+
 	private Bitmap mRecovery;
 	private Bitmap mAttack;
 	private Bitmap mDefend;
+	
+	private Bitmap mFigure_enemy;
+	private Bitmap mRecovery_enemy;
+	private Bitmap mAttack_enemy;
+	private Bitmap mDefend_enemy;
 
 	private LayoutInflater layoutInflater;
 	protected final static int mapSizeX = 8;
@@ -38,6 +42,8 @@ public class TheGame extends GameThread {
 	private Activity activity;
 
 	protected static WorldObject[][] worldMap = new WorldObject[mapSizeX][mapSizeY];
+	public static boolean isPlayersTurn = false;
+	public static int AP = 100;
 
 	/**
 	 * Constructor called from the activity call, passing the current activity
@@ -49,7 +55,7 @@ public class TheGame extends GameThread {
 		super(gameView, activity);
 		this.activity = activity;
 
-		setGridSize (gameView);
+		setGridSize(gameView);
 		mFigure = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.face);
 
@@ -58,28 +64,38 @@ public class TheGame extends GameThread {
 
 		mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.square_teal);
-		
+
 		mStone = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.stone);
-		
+
 		mTree = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.tree);
-		
+
 		mRecovery = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.cross); 
-		
+				R.drawable.cross);
+
 		mAttack = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.angry); 
-		
+				R.drawable.angry);
+
 		mDefend = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.defend);
 
 		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
 				.getResources().getDisplayMetrics().density);
-		
-		
 
 		mCommandView = (EditText) this.activity.findViewById(R.id.commandView);
+		
+		mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.face_enemy);
+		
+		mRecovery_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.cross_enemy);
+
+		mAttack_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.angry_enemy);
+
+		mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.defend_enemy);		
 
 		// TODO
 		createNewWorld();
@@ -93,7 +109,7 @@ public class TheGame extends GameThread {
 	 */
 	public TheGame(GameView gameView) {
 		super(gameView);
-		setGridSize (gameView);
+		setGridSize(gameView);
 
 		mFigure = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.face);
@@ -103,15 +119,40 @@ public class TheGame extends GameThread {
 
 		mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.square_teal);
-		
+
 		mStone = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.stone);		
-		
+				R.drawable.stone);
+
 		mTree = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.tree);
 
 		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
 				.getResources().getDisplayMetrics().density);
+		
+		mRecovery = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.cross);
+
+		mAttack = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.angry);
+
+		mDefend = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.defend);
+
+		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
+				.getResources().getDisplayMetrics().density);
+		
+		mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.face_enemy);
+		
+		mRecovery_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.cross_enemy);
+
+		mAttack_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.angry_enemy);
+
+		mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.defend_enemy);
+
 
 		// TODO
 		createNewWorld();
@@ -120,13 +161,26 @@ public class TheGame extends GameThread {
 	public void createNewWorld() {
 		// TODO
 		worldMap[6][6] = new ActionFigure(6, 6);
-		worldMap[0][1] = new ActionFigure(0, 1);
-		
-		worldMap[4][2] = new Obstacle(4,2);
-		worldMap[6][0] = new Obstacle(6,0);
+		worldMap[0][1] = new EnemyActionFigure(0, 1);
+
+
+		worldMap[4][2] = new Obstacle(4, 2);
+		worldMap[6][0] = new Obstacle(6, 0);
 
 	}
 
+	public void enemyMoveDecision() {
+		for (int i = 0; i < mapSizeX; i++) {
+			for (int j = 0; j < mapSizeY; j++) {
+				if (worldMap[i][j] instanceof EnemyActionFigure) {
+				//next move for the enemy 
+				worldMap[i][j].decideOnNextMove();
+				//TODO move method to a better place to include turns		
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Function called from the GUI thread. Draws the game graphics.
 	 */
@@ -139,21 +193,61 @@ public class TheGame extends GameThread {
 		for (int i = 0; i < mapSizeX; i++) {
 			for (int j = 0; j < mapSizeY; j++) {
 				canvas.drawBitmap(mGridTile, i * mGridSize, j * mGridSize, null);
-				if (worldMap[i][j] instanceof ActionFigure) { // TODO recently changed
-					if (!worldMap[i][j].isSelected()) { // use different bitmap
-						// if selected
-						canvas.drawBitmap(mFigure, i * mGridSize,
+				if (worldMap[i][j] instanceof EnemyActionFigure) {					
+					uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j].getState();
+					switch (worldMap[i][j].getState()) {
+					case ATTACK:
+						canvas.drawBitmap(mAttack_enemy, i * mGridSize, j
+								* mGridSize, null);
+						break;
+					case HEAL:
+						canvas.drawBitmap(mRecovery_enemy, i * mGridSize, j
+								* mGridSize, null);
+						break;
+					case DEFEND : 
+						canvas.drawBitmap(mDefend_enemy, i * mGridSize, j
+								* mGridSize, null);
+						break;
+					default :
+						canvas.drawBitmap(mFigure_enemy, i * mGridSize,
 								j * mGridSize, null);
+					}					
+				}
+				else if (worldMap[i][j] instanceof ActionFigure) { 
+															
+					if (!worldMap[i][j].isSelected()) { // use different bitmap
+						// if not selected
+						uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j].getState();
+						switch (worldMap[i][j].getState()) {
+						case ATTACK:
+							canvas.drawBitmap(mAttack, i * mGridSize, j
+									* mGridSize, null);
+							break;
+						case HEAL:
+							canvas.drawBitmap(mRecovery, i * mGridSize, j
+									* mGridSize, null);
+							break;
+						case DEFEND : 
+							canvas.drawBitmap(mDefend, i * mGridSize, j
+									* mGridSize, null);
+							break;
+						default :
+							canvas.drawBitmap(mFigure, i * mGridSize,
+									j * mGridSize, null);
+						}
+
 					} else {
 						canvas.drawBitmap(mFigureSelected, i * mGridSize, j
 								* mGridSize, null);
 					}
-				}
-				else if (worldMap[i][j] instanceof Obstacle) {
-					canvas.drawBitmap(mTree, i * mGridSize,
-							j * mGridSize, null);
+				} else if (worldMap[i][j] instanceof Obstacle) {
+					canvas.drawBitmap(mTree, i * mGridSize, j * mGridSize, null);
 				}
 			}
+		}
+		
+		if (!isPlayersTurn) {
+			enemyMoveDecision();
 		}
 	}
 
@@ -262,17 +356,16 @@ public class TheGame extends GameThread {
 	 * 
 	 * @param gameView
 	 */
-	private void setGridSize (GameView gameView) {
-		int density= gameView.getResources().getDisplayMetrics().densityDpi;
-		int width= gameView.getResources().getDisplayMetrics().widthPixels;
-		int height= gameView.getResources().getDisplayMetrics().heightPixels;
+	private void setGridSize(GameView gameView) {
+		int density = gameView.getResources().getDisplayMetrics().densityDpi;
+		int width = gameView.getResources().getDisplayMetrics().widthPixels;
+		int height = gameView.getResources().getDisplayMetrics().heightPixels;
 
-		
 		// support for tablet graphics
 		if (width >= 800 && density == DisplayMetrics.DENSITY_HIGH) {
 			mGridSize = 69;
 			return;
-		}		
+		}
 		if (width >= 600 && density == DisplayMetrics.DENSITY_MEDIUM) {
 			mGridSize = 51;
 			return;
@@ -281,22 +374,30 @@ public class TheGame extends GameThread {
 			mGridSize = 69;
 			return;
 		}
-		
+
 		// for mobile graphics
-		switch(density)
-		{
+		switch (density) {
 		case DisplayMetrics.DENSITY_LOW:
 			mGridSize = 25;
-		    break;
+			break;
 		case DisplayMetrics.DENSITY_MEDIUM:
 			mGridSize = 34;
 			break;
 		case DisplayMetrics.DENSITY_HIGH:
 			mGridSize = 51;
-		    break;
+			break;
 		case DisplayMetrics.DENSITY_XHIGH:
 			mGridSize = 69;
-		    break;
+			break;
+		}
+	}
+	
+	public boolean checkPlayersTurn() {
+		if (isPlayersTurn) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 }
