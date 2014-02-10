@@ -42,13 +42,17 @@ class Edge {
 
 public class Dijkstra {
 
+	List<Vertex> vertices;
+
 	public void computePaths(Vertex source) {
 		source.minDistance = 0.;
 		PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>();
-		vertexQueue.add(source);
+
+		// vertexQueue.add(source);
+		vertexQueue.addAll(vertices);
 
 		while (!vertexQueue.isEmpty()) {
-			Vertex u = vertexQueue.poll();
+			Vertex u = vertexQueue.poll(); // Remove and return best vertex
 
 			// Visit each edge exiting u
 			for (Edge e : u.adjacencies) {
@@ -56,10 +60,12 @@ public class Dijkstra {
 				double weight = e.weight;
 				double distanceThroughU = u.minDistance + weight;
 				if (distanceThroughU < v.minDistance) {
-					vertexQueue.remove(v);
+					// vertexQueue.remove(v);
 					v.minDistance = distanceThroughU;
 					v.previous = u;
-					vertexQueue.add(v);
+
+					vertexQueue.remove(v);
+
 				}
 			}
 		}
@@ -74,30 +80,61 @@ public class Dijkstra {
 	}
 
 	public void pathfinding(int source, int goal) {
-		List<Vertex> vertices = new ArrayList<Vertex>();
-
+		initializeAllVertices();
+		int counter = 0;
 		for (int i = 0; i < TheGame.mapSizeX; i++) {
 			for (int j = 0; j < TheGame.mapSizeY; j++) {
 				if (TheGame.worldMap[i][j] == null) {
-					Vertex currentVertex = new Vertex(i, j);
-					vertices.add(currentVertex);
-					currentVertex.adjacencies = new ArrayList<Edge>();
+					Vertex currentVertex = vertices.get(counter);
+					int index = 0;
+					
 					if (i + 1 < TheGame.mapSizeX) {
-						currentVertex.adjacencies.add(new Edge(currentVertex, 1));
+						int y = currentVertex.getY();
+						int x = currentVertex.getX() + 1;
+						if (!checkIsNull(x, y)) {
+							break;
+						}
+						index = TheGame.getIndex(x, y);
+						currentVertex.adjacencies.add(new Edge(vertices
+								.get(index), 1));
 					}
 					if (i - 1 >= 0) {
-						currentVertex.adjacencies.add(new Edge(currentVertex, 1));
+						int y = currentVertex.getY();
+						int x = currentVertex.getX() - 1;
+						if (!checkIsNull(x, y)) {
+							break;
+						}
+						index = TheGame.getIndex(x, y);
+						currentVertex.adjacencies.add(new Edge(vertices
+								.get(index), 1));
 					}
 					if (j + 1 < TheGame.mapSizeY) {
 						if ((i + 1) * TheGame.mapSizeY < TheGame.mapSizeX
 								* TheGame.mapSizeY) {
-							currentVertex.adjacencies.add(new Edge(
-									currentVertex, 1));
+							int y = currentVertex.getY();
+							int x = currentVertex.getX() + TheGame.mapSizeX;
+							if (!checkIsNull(x, y)) {
+								break;
+							}
+							index = TheGame.getIndex(x, y);
+							currentVertex.adjacencies.add(new Edge(vertices
+									.get(index), 1));
 						}
 					}
 					if (j - 1 >= 0) {
-						currentVertex.adjacencies.add(new Edge(currentVertex, 1));
+						int y = currentVertex.getY();
+						int x = currentVertex.getX() - TheGame.mapSizeX;
+						if (!checkIsNull(x, y)) {
+							break;
+						}
+						index = TheGame.getIndex(x, y);
+						if (index < 0) {
+							break;
+						}
+						currentVertex.adjacencies.add(new Edge(vertices
+								.get(index), 1));
 					}
+					counter++;
 				}
 			}
 		}
@@ -109,6 +146,35 @@ public class Dijkstra {
 			System.out.println("Path: " + path);
 		}
 		System.out.println("df");
+	}
+	
+	public boolean checkIsNull(int x, int y) { // checks if the map value is null
+		if ((y / 8) >= 1) {
+			x++;
+			y = y - 7;
+		}
+		if ((y / 8) <= -1) {
+			x--;
+			y = y + 8;
+		}
+		if (TheGame.worldMap[x][y] == null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public void initializeAllVertices() {
+		vertices = new ArrayList<Vertex>();
+
+		for (int i = 0; i < TheGame.mapSizeX; i++) {
+			for (int j = 0; j < TheGame.mapSizeY; j++) {
+				Vertex currentVertex = new Vertex(i, j);
+				currentVertex.adjacencies = new ArrayList<Edge>();
+				vertices.add(currentVertex);
+			}
+		}
 	}
 
 }

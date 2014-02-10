@@ -16,18 +16,6 @@ public class EnemyActionFigure extends ActionFigure {
 
 	}
 
-	public int getIndex(ActionFigure figure) {
-		int counter = figure.getY() * TheGame.mapSizeY + figure.getX();
-		for (int i = 0; i <= figure.getX(); i++) {
-			for (int j = 0; j <= figure.getY(); j++) {
-				if (TheGame.worldMap[i][j] != null) {
-					counter--;
-				}
-			}
-		}
-		return counter;
-	}
-
 	public void decideOnNextMove() {
 		targetEnemy = findClosestEnemy();
 		if (targetEnemy.getHitPoints() >= (this.hitPoints + TheGame.AP)) {
@@ -35,7 +23,7 @@ public class EnemyActionFigure extends ActionFigure {
 				this.attack(getDirectionOfEnemy(), 1);
 			} else {
 				Dijkstra dijkstra = new Dijkstra();
-				dijkstra.pathfinding(getIndex(this), getIndex(targetEnemy));
+				dijkstra.pathfinding(TheGame.getIndex(this.getX(), this.getY()), TheGame.getIndex(targetEnemy.getX(), targetEnemy.getY()));
 				
 //				for (Vertex v : dijkstra.getPath()) {
 //					v.getX();
