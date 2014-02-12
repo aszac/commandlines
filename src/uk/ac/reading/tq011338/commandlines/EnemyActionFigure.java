@@ -16,6 +16,19 @@ public class EnemyActionFigure extends ActionFigure {
 
 	}
 
+	public static int getIndex(int x, int y) {
+		int counter = y * TheGame.mapSizeY + x;
+
+		for (int i = 0; i <= x; i++) {
+			for (int j = 0; j <= y; j++) {
+				if (TheGame.worldMap[i][j] != null) {
+					counter--;
+				}
+			}
+		}
+		return counter;
+	}
+
 	public void decideOnNextMove() {
 		targetEnemy = findClosestEnemy();
 		if (targetEnemy.getHitPoints() >= (this.hitPoints + TheGame.AP)) {
@@ -23,15 +36,13 @@ public class EnemyActionFigure extends ActionFigure {
 				this.attack(getDirectionOfEnemy(), 1);
 			} else {
 				Dijkstra dijkstra = new Dijkstra();
-				dijkstra.pathfinding(TheGame.getIndex(this.getX(), this.getY()), TheGame.getIndex(targetEnemy.getX(), targetEnemy.getY()));
-				
-//				for (Vertex v : dijkstra.getPath()) {
-//					v.getX();
-//					v.getY();
-//				}
-//				Vertex nextMove = dijkstra.getPath().get(0);
-//				nextMove.getX();
-//				nextMove.getY();
+				dijkstra.pathfinding(getIndex(this.getX(), this.getY()),
+						getIndex(targetEnemy.getX(), targetEnemy.getY()));
+
+				Vertex nextMove = dijkstra.getPath().get(0);
+				int moveX = nextMove.getX();
+				int moveY = nextMove.getY();
+				this.move(getMoveDirection(moveX, moveY), 1);
 			}
 		} else if (TheGame.AP < 10) {
 			this.defend();
@@ -39,6 +50,18 @@ public class EnemyActionFigure extends ActionFigure {
 			this.move(getOppositeDirection(), 10);
 		} else {
 			this.heal(10);
+		}
+	}
+
+	private Direction getMoveDirection(int moveX, int moveY) {
+		if (moveX < this.getX()) {
+			return Direction.UP;
+		} else if (moveX > this.getX()) {
+			return Direction.DOWN;
+		} else if (moveY > this.getY()) {
+			return Direction.RIGHT;
+		} else {
+			return Direction.LEFT;
 		}
 	}
 

@@ -401,24 +401,4 @@ public class TheGame extends GameThread {
 		}
 	}
 	
-	public static int getIndex(int x, int y) {
-		if ((y / 8) >= 1) {
-			x++;
-			y = y - 7;
-		}
-		if ((y / 8) <= -1) {
-			x--;
-			y = y + 8;
-		}
-		int counter = y * TheGame.mapSizeY + x;
-
-		for (int i = 0; i <= x; i++) {
-			for (int j = 0; j <= y; j++) {
-				if (TheGame.worldMap[i][j] != null) {
-					counter--;
-				}
-			}
-		}
-		return counter;
-	}
 }
