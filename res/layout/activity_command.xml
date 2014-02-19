@@ -14,12 +14,42 @@
         android:layout_height="fill_parent"
         android:orientation="vertical" >
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/commandListLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="30" >
-        </RelativeLayout>
+            android:layout_weight="10" 
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/attackButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/angry"
+                android:contentDescription="attack button" />
+
+            <ImageButton
+                android:id="@+id/healButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/cross" 
+                android:contentDescription="heal button"/>
+
+            <ImageButton
+                android:id="@+id/moveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/face" 
+                android:contentDescription="move button"/>
+
+            <ImageButton
+                android:id="@+id/defendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/defend" 
+                android:contentDescription="defend button"/>
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/commandView"

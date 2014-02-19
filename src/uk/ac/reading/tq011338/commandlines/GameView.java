@@ -52,9 +52,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
-		thread = new TheGame(this);
-		thread.setRunning(true);
-		thread.start();
+		if(thread!=null) {
+			thread.setRunning(true);
+			
+			if(thread.getState() == Thread.State.NEW){
+				//Just start the new thread
+				thread.start();
+			}
+			else {
+				if(thread.getState() == Thread.State.TERMINATED){
+					//Start a new thread
+					//Should be this to update screen with old game: new GameThread(this, thread);
+					//The method should set all fields in new thread to the value of old thread's fields 
+					thread = new TheGame(this, null); 
+					thread.setRunning(true);
+					thread.start();
+				}
+			}
+		}
+//		thread = new TheGame(this);
+//		thread.setRunning(true);
+//		thread.start();
 
 	}
 

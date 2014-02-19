@@ -9,7 +9,6 @@ public interface WorldObject {
 	int hitPoints = 100;
 	State state = State.MOVE;
 
-	
 	public boolean isSelected();
 	public void setSelected(boolean selected);
 	public void setCommand(String command);

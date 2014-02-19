@@ -63,6 +63,7 @@ public class CommandLines extends Activity {
 				}
 
 				figure.setCommand("");
+				TheGame.isButtonClicked = true;
 				mCommandView.setText("");
 			}
 		});
@@ -90,13 +91,13 @@ public class CommandLines extends Activity {
 
 	};
 
-	public boolean onTouchEvent(MotionEvent event) {
-		int action = event.getAction();
-		if (action == MotionEvent.ACTION_DOWN) {
-			mGameThread.selectFigure(event);
-		}
-		return gestureDetector.onTouchEvent(event);
-	}
+//	public boolean onTouchEvent(MotionEvent event) {
+//		int action = event.getAction();
+//		if (action == MotionEvent.ACTION_DOWN) {
+//			mGameThread.selectFigure(event);
+//		}
+//		return gestureDetector.onTouchEvent(event);
+//	}
 
 	@Override
 	protected void onDestroy() {

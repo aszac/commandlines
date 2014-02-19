@@ -1,14 +1,15 @@
 package uk.ac.reading.tq011338.commandlines;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -23,7 +24,7 @@ public class TheGame extends GameThread {
 	private Bitmap mRecovery;
 	private Bitmap mAttack;
 	private Bitmap mDefend;
-	
+
 	private Bitmap mFigure_enemy;
 	private Bitmap mRecovery_enemy;
 	private Bitmap mAttack_enemy;
@@ -43,7 +44,9 @@ public class TheGame extends GameThread {
 
 	protected static WorldObject[][] worldMap = new WorldObject[mapSizeX][mapSizeY];
 	public static boolean isPlayersTurn = false;
-	public static int AP = 100;
+	public static boolean isButtonClicked = false;
+	public static List<ActionFigure> figureListForTurns = new ArrayList<ActionFigure>();
+	public static List<ActionFigure> figureList = new ArrayList<ActionFigure>();
 
 	/**
 	 * Constructor called from the activity call, passing the current activity
@@ -84,66 +87,10 @@ public class TheGame extends GameThread {
 				.getResources().getDisplayMetrics().density);
 
 		mCommandView = (EditText) this.activity.findViewById(R.id.commandView);
-		
+
 		mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.face_enemy);
-		
-		mRecovery_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.cross_enemy);
 
-		mAttack_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.angry_enemy);
-
-		mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.defend_enemy);		
-
-		// TODO
-		createNewWorld();
-
-	}
-
-	/**
-	 * Constructor called from the GameView class
-	 * 
-	 * @param gameView
-	 */
-	public TheGame(GameView gameView) {
-		super(gameView);
-		setGridSize(gameView);
-
-		mFigure = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.face);
-
-		mFigureSelected = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.selectedface);
-
-		mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.square_teal);
-
-		mStone = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.stone);
-
-		mTree = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.tree);
-
-		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
-				.getResources().getDisplayMetrics().density);
-		
-		mRecovery = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.cross);
-
-		mAttack = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.angry);
-
-		mDefend = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.defend);
-
-		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
-				.getResources().getDisplayMetrics().density);
-		
-		mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.face_enemy);
-		
 		mRecovery_enemy = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.cross_enemy);
 
@@ -153,34 +100,114 @@ public class TheGame extends GameThread {
 		mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.defend_enemy);
 
-
 		// TODO
 		createNewWorld();
+
 	}
+
+//	/**
+//	 * Constructor called from the GameView class
+//	 * 
+//	 * @param gameView
+//	 */
+//	public TheGame(GameView gameView) {
+//		super(gameView);
+//		setGridSize(gameView);
+//
+//		mFigure = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.face);
+//
+//		mFigureSelected = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.selectedface);
+//
+//		mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.square_teal);
+//
+//		mStone = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.stone);
+//
+//		mTree = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.tree);
+//
+//		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
+//				.getResources().getDisplayMetrics().density);
+//
+//		mRecovery = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.cross);
+//
+//		mAttack = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.angry);
+//
+//		mDefend = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.defend);
+//
+//		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
+//				.getResources().getDisplayMetrics().density);
+//
+//		mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.face_enemy);
+//
+//		mRecovery_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.cross_enemy);
+//
+//		mAttack_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.angry_enemy);
+//
+//		mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+//				R.drawable.defend_enemy);
+//
+//		// TODO
+//		createNewWorld();
+//	}
 
 	public void createNewWorld() {
 		// TODO
-		worldMap[6][6] = new ActionFigure(6, 6);
-		worldMap[0][1] = new EnemyActionFigure(0, 1);
+		ActionFigure figure1 = new ActionFigure(6, 6);
+		figureList.add(figure1);
+		worldMap[6][6] = figure1;
 
+		EnemyActionFigure figure2 = new EnemyActionFigure(0, 1);
+		figureList.add(figure2);
+		worldMap[0][1] = figure2;
 
 		worldMap[4][2] = new Obstacle(4, 2);
 		worldMap[6][0] = new Obstacle(6, 0);
 
 	}
 
-	public void enemyMoveDecision() {
-		for (int i = 0; i < mapSizeX; i++) {
-			for (int j = 0; j < mapSizeY; j++) {
-				if (worldMap[i][j] instanceof EnemyActionFigure) {
-				//next move for the enemy 
-				worldMap[i][j].decideOnNextMove();
-				//TODO move method to a better place to include turns		
+	public void checkTurn() {
+		if (figureListForTurns.size() == 0) {
+			figureListForTurns = figureList;
+			isPlayersTurn = false;
+		}
+		
+		// move all the enemy figures
+		if (!isPlayersTurn) {
+			for (ActionFigure figure : figureListForTurns) {
+				if (figure instanceof EnemyActionFigure) {
+					figure.setSelected(true);
+					while (figure.AP >= 10) {
+						figure.decideOnNextMove();
+					}
+					figureListForTurns.remove(figure);				
 				}
 			}
 		}
+		
+		isPlayersTurn = true;
+		for (ActionFigure figure : figureListForTurns) {
+			if (!(figure instanceof EnemyActionFigure)) {
+				figure.setSelected(true);
+				if (isButtonClicked) {
+				figureListForTurns.remove(figure);	
+				isButtonClicked = false;
+				}
+			}
+		}		
+
+		checkIfGameOver();
 	}
-	
+
 	/**
 	 * Function called from the GUI thread. Draws the game graphics.
 	 */
@@ -193,8 +220,9 @@ public class TheGame extends GameThread {
 		for (int i = 0; i < mapSizeX; i++) {
 			for (int j = 0; j < mapSizeY; j++) {
 				canvas.drawBitmap(mGridTile, i * mGridSize, j * mGridSize, null);
-				if (worldMap[i][j] instanceof EnemyActionFigure) {					
-					uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j].getState();
+				if (worldMap[i][j] instanceof EnemyActionFigure) {
+					uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j]
+							.getState();
 					switch (worldMap[i][j].getState()) {
 					case ATTACK:
 						canvas.drawBitmap(mAttack_enemy, i * mGridSize, j
@@ -204,20 +232,20 @@ public class TheGame extends GameThread {
 						canvas.drawBitmap(mRecovery_enemy, i * mGridSize, j
 								* mGridSize, null);
 						break;
-					case DEFEND : 
+					case DEFEND:
 						canvas.drawBitmap(mDefend_enemy, i * mGridSize, j
 								* mGridSize, null);
 						break;
-					default :
-						canvas.drawBitmap(mFigure_enemy, i * mGridSize,
-								j * mGridSize, null);
-					}					
-				}
-				else if (worldMap[i][j] instanceof ActionFigure) { 
-															
+					default:
+						canvas.drawBitmap(mFigure_enemy, i * mGridSize, j
+								* mGridSize, null);
+					}
+				} else if (worldMap[i][j] instanceof ActionFigure) {
+
 					if (!worldMap[i][j].isSelected()) { // use different bitmap
 						// if not selected
-						uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j].getState();
+						uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j]
+								.getState();
 						switch (worldMap[i][j].getState()) {
 						case ATTACK:
 							canvas.drawBitmap(mAttack, i * mGridSize, j
@@ -227,13 +255,13 @@ public class TheGame extends GameThread {
 							canvas.drawBitmap(mRecovery, i * mGridSize, j
 									* mGridSize, null);
 							break;
-						case DEFEND : 
+						case DEFEND:
 							canvas.drawBitmap(mDefend, i * mGridSize, j
 									* mGridSize, null);
 							break;
-						default :
-							canvas.drawBitmap(mFigure, i * mGridSize,
-									j * mGridSize, null);
+						default:
+							canvas.drawBitmap(mFigure, i * mGridSize, j
+									* mGridSize, null);
 						}
 
 					} else {
@@ -245,10 +273,9 @@ public class TheGame extends GameThread {
 				}
 			}
 		}
-		
-		if (!isPlayersTurn) {
-			enemyMoveDecision();
-		}
+
+		// execute game
+		checkTurn();
 	}
 
 	/**
@@ -273,29 +300,29 @@ public class TheGame extends GameThread {
 		}
 	}
 
-	/**
-	 * Called when the screen is touched. Selects or unselects the action
-	 * figure.
-	 */
-	public void selectFigure(MotionEvent event) {
-		Point touchPoint = new Point((int) event.getX(), (int) event.getY());
-
-		// find the position in the array
-		int x = (int) Math.floor(touchPoint.x / mGridSize);
-		int y = (int) Math.floor((touchPoint.y - mStatusBarHight) / mGridSize);
-
-		// if selected unselect, if unselected select
-		if (x < mapSizeX && y < mapSizeY) {
-			if (worldMap[x][y] != null) {
-				if (worldMap[x][y].isSelected()) {
-					unselect(x, y);
-				} else {
-					select(x, y);
-				}
-			}
-		}
-
-	}
+//	/**
+//	 * Called when the screen is touched. Selects or unselects the action
+//	 * figure.
+//	 */
+//	public void selectFigure(MotionEvent event) {
+//		Point touchPoint = new Point((int) event.getX(), (int) event.getY());
+//
+//		// find the position in the array
+//		int x = (int) Math.floor(touchPoint.x / mGridSize);
+//		int y = (int) Math.floor((touchPoint.y - mStatusBarHight) / mGridSize);
+//
+//		// if selected unselect, if unselected select
+//		if (x < mapSizeX && y < mapSizeY) {
+//			if (worldMap[x][y] != null) {
+//				if (worldMap[x][y].isSelected()) {
+//					unselect(x, y);
+//				} else {
+//					select(x, y);
+//				}
+//			}
+//		}
+//
+//	}
 
 	/**
 	 * Unselects the action figure. Called when selected figure is touched or
@@ -325,15 +352,25 @@ public class TheGame extends GameThread {
 	private void select(int x, int y) {
 		for (int i = 0; i < mapSizeX; i++) { // unselect all selected figures
 			for (int j = 0; j < mapSizeY; j++) {
-				if (worldMap[i][j] != null && worldMap[i][j].isSelected()) {
-					unselect(i, j);
+				if (worldMap[i][j] != null && worldMap[i][j].isSelected()) { // except
+																				// if
+																				// its
+																				// the
+																				// current
+																				// one
+					if (x != i && y != j) {
+						unselect(i, j);
+					}
 				}
 			}
 		}
 
 		worldMap[x][y].setSelected(true); // select the desired object
-		mCommandView.setText(worldMap[x][y].getCommand()); // set command for
-															// the object
+		if (!worldMap[x][y].getCommand().equals("")) {
+			mCommandView.setText(worldMap[x][y].getCommand()); // set command
+																// for
+																// the object
+		}
 	}
 
 	/**
@@ -391,14 +428,36 @@ public class TheGame extends GameThread {
 			break;
 		}
 	}
-	
-	public boolean checkPlayersTurn() {
-		if (isPlayersTurn) {
+
+	private boolean checkIfGameOver() {
+		int numberOfFigures = 0;
+		int numberOfEnemyFigures = 0;
+		for (int i = 0; i < mapSizeX; i++) {
+			for (int j = 0; j < mapSizeY; j++) {
+				if (worldMap[i][j] instanceof ActionFigure) {
+					if (worldMap[i][j] instanceof ActionFigure) {
+						numberOfEnemyFigures++;
+					} else {
+						numberOfFigures++;
+					}
+				}
+			}
+		}
+		if (numberOfFigures == 0) {
 			return true;
 		}
-		else {
-			return false;
+		if (numberOfEnemyFigures == 0) {
+			return true;
 		}
+		return false;
 	}
-	
+
+	public boolean isPlayersTurn() {
+		return isPlayersTurn;
+	}
+
+	public void setPlayersTurn(boolean isPlayersTurn) {
+		TheGame.isPlayersTurn = isPlayersTurn;
+	}
+
 }

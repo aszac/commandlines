@@ -3,12 +3,12 @@ package uk.ac.reading.tq011338.commandlines;
 public class ActionFigure implements WorldObject {
 	protected int x; // x coordinate
 	protected int y; // y coordinate
-	private boolean selected = false;
+	protected boolean selected = false;
 
 	private String command = new String();
 
-	private int hitPoints;
-
+	protected int hitPoints;
+	protected int AP;
 	protected State state;
 
 	/**
@@ -38,6 +38,7 @@ public class ActionFigure implements WorldObject {
 		command = "";
 		hitPoints = 100;
 		this.state = State.MOVE;
+		AP = 100;
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class ActionFigure implements WorldObject {
 	public void move(Direction direction, int numberOfSteps) {
 
 		state = State.MOVE;
-
+		AP = AP - (10 * numberOfSteps);
 		while (numberOfSteps > 0) { // performing one step at a time
 			// check if action figure stepping out of the grid
 			if (checkIfOutOfBounds(direction))
@@ -147,7 +148,7 @@ public class ActionFigure implements WorldObject {
 
 		// TODO reduce turns
 		state = State.ATTACK;
-
+		AP = AP - (20 * force);
 		if (!checkIfOutOfBounds(direction)) {
 			// check if enemy present in the field && hit
 			switch (direction) {
@@ -185,13 +186,13 @@ public class ActionFigure implements WorldObject {
 
 	public void defend() {
 		// TODO if enough action points defend
-
+		AP = 10;
 		state = State.DEFEND;
 	}
 
 	public void heal(int times) {
 		state = State.HEAL;
-
+		AP = AP - (10 * times);
 		// TODO if enough action points
 		if (hitPoints < 100) {
 			hitPoints = hitPoints + times * 10;
@@ -199,7 +200,14 @@ public class ActionFigure implements WorldObject {
 	}
 
 	public void checkIfKilled(int x, int y) {
-		if (TheGame.worldMap[x][y].getHitPoints() <= 0) {
+		if (TheGame.worldMap[x][y].getHitPoints() <= 0) {			
+			TheGame.figureList.remove(TheGame.worldMap[x][y]);
+			try {
+				TheGame.figureListForTurns.remove(TheGame.worldMap[x][y]);
+			}
+			catch (Exception exception) {
+				
+			}
 			TheGame.worldMap[x][y] = null;
 		}
 	}
@@ -257,6 +265,16 @@ public class ActionFigure implements WorldObject {
 
 	public void reduceHitPoints(int hitPoints) {
 		this.hitPoints = this.hitPoints - hitPoints;
+	}
+	
+	
+
+	public int getAP() {
+		return AP;
+	}
+
+	public void setAP(int aP) {
+		AP = aP;
 	}
 
 	@Override

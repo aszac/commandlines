@@ -5,15 +5,18 @@ import java.util.List;
 
 public class EnemyActionFigure extends ActionFigure {
 
-	protected int x; // x coordinate
-	protected int y; // y coordinate
+	// protected int x; // x coordinate
+	// protected int y; // y coordinate
 
-	private int hitPoints;
+	// private int hitPoints;
 	private ActionFigure targetEnemy = null;
+
+	// private boolean selected = false;
+	// protected int AP;
 
 	public EnemyActionFigure(int x, int y) {
 		super(x, y);
-
+		// AP = 100;
 	}
 
 	public static int getIndex(int x, int y) {
@@ -31,20 +34,25 @@ public class EnemyActionFigure extends ActionFigure {
 
 	public void decideOnNextMove() {
 		targetEnemy = findClosestEnemy();
-		if (targetEnemy.getHitPoints() >= (this.hitPoints + TheGame.AP)) {
-			if (getDistanceToClosestEnemy() <= 1) {
-				this.attack(getDirectionOfEnemy(), 1);
-			} else {
-				Dijkstra dijkstra = new Dijkstra();
-				dijkstra.pathfinding(getIndex(this.getX(), this.getY()),
-						getIndex(targetEnemy.getX(), targetEnemy.getY()));
+		Dijkstra dijkstra = new Dijkstra();
+		dijkstra.pathfinding(getIndex(this.getX(), this.getY()),
+				getIndex(targetEnemy.getX(), targetEnemy.getY()));
+		int counter = 0;
 
-				Vertex nextMove = dijkstra.getPath().get(0);
-				int moveX = nextMove.getX();
-				int moveY = nextMove.getY();
-				this.move(getMoveDirection(moveX, moveY), 1);
+		if (targetEnemy.getHitPoints() <= (this.hitPoints + this.AP)) {
+			while (AP != 0) {
+				if (getDistanceToClosestEnemy() <= 1) {
+					this.attack(getDirectionOfEnemy(), 1);
+				} else {
+					Vertex nextMove = dijkstra.getPath().get(counter);
+					int moveX = nextMove.getX();
+					int moveY = nextMove.getY();
+					this.move(getMoveDirection(moveX, moveY), 1);
+					counter++;
+				}
 			}
-		} else if (TheGame.AP < 10) {
+
+		} else if (this.AP < 10) {
 			this.defend();
 		} else if (this.hitPoints < 40) { // run away
 			this.move(getOppositeDirection(), 10);
@@ -135,4 +143,19 @@ public class EnemyActionFigure extends ActionFigure {
 		return closestEnemy;
 	}
 
+	// public boolean isSelected(){
+	// return selected;
+	// }
+	//
+	// public void setSelected(boolean selected) {
+	// this.selected = selected;
+	// }
+	//
+	// public int getAP() {
+	// return AP;
+	// }
+	//
+	// public void setAP(int aP) {
+	// AP = aP;
+	// }
 }
