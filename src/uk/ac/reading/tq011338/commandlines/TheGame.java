@@ -105,60 +105,60 @@ public class TheGame extends GameThread {
 
 	}
 
-//	/**
-//	 * Constructor called from the GameView class
-//	 * 
-//	 * @param gameView
-//	 */
-//	public TheGame(GameView gameView) {
-//		super(gameView);
-//		setGridSize(gameView);
-//
-//		mFigure = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.face);
-//
-//		mFigureSelected = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.selectedface);
-//
-//		mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.square_teal);
-//
-//		mStone = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.stone);
-//
-//		mTree = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.tree);
-//
-//		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
-//				.getResources().getDisplayMetrics().density);
-//
-//		mRecovery = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.cross);
-//
-//		mAttack = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.angry);
-//
-//		mDefend = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.defend);
-//
-//		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
-//				.getResources().getDisplayMetrics().density);
-//
-//		mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.face_enemy);
-//
-//		mRecovery_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.cross_enemy);
-//
-//		mAttack_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.angry_enemy);
-//
-//		mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-//				R.drawable.defend_enemy);
-//
-//		// TODO
-//		createNewWorld();
-//	}
+	// /**
+	// * Constructor called from the GameView class
+	// *
+	// * @param gameView
+	// */
+	// public TheGame(GameView gameView) {
+	// super(gameView);
+	// setGridSize(gameView);
+	//
+	// mFigure = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.face);
+	//
+	// mFigureSelected = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.selectedface);
+	//
+	// mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.square_teal);
+	//
+	// mStone = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.stone);
+	//
+	// mTree = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.tree);
+	//
+	// mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
+	// .getResources().getDisplayMetrics().density);
+	//
+	// mRecovery = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.cross);
+	//
+	// mAttack = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.angry);
+	//
+	// mDefend = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.defend);
+	//
+	// mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
+	// .getResources().getDisplayMetrics().density);
+	//
+	// mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.face_enemy);
+	//
+	// mRecovery_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.cross_enemy);
+	//
+	// mAttack_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.angry_enemy);
+	//
+	// mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
+	// R.drawable.defend_enemy);
+	//
+	// // TODO
+	// createNewWorld();
+	// }
 
 	public void createNewWorld() {
 		// TODO
@@ -177,33 +177,37 @@ public class TheGame extends GameThread {
 
 	public void checkTurn() {
 		if (figureListForTurns.size() == 0) {
-			figureListForTurns = figureList;
+			for (ActionFigure figure : figureList) {
+				figureListForTurns.add(figure);
+			}
+			// figureListForTurns = figureList;
 			isPlayersTurn = false;
 		}
-		
+
 		// move all the enemy figures
 		if (!isPlayersTurn) {
 			for (ActionFigure figure : figureListForTurns) {
 				if (figure instanceof EnemyActionFigure) {
-					figure.setSelected(true);
+					select(figure.getX(), figure.getY());
 					while (figure.AP >= 10) {
 						figure.decideOnNextMove();
 					}
-					figureListForTurns.remove(figure);				
+					figureListForTurns.remove(figure);
 				}
 			}
 		}
-		
+
 		isPlayersTurn = true;
 		for (ActionFigure figure : figureListForTurns) {
 			if (!(figure instanceof EnemyActionFigure)) {
-				figure.setSelected(true);
 				if (isButtonClicked) {
-				figureListForTurns.remove(figure);	
-				isButtonClicked = false;
+					figureListForTurns.remove(figure);
+					isButtonClicked = false;
+				} else {
+					select(figure.getX(), figure.getY());
 				}
 			}
-		}		
+		}
 
 		checkIfGameOver();
 	}
@@ -300,29 +304,29 @@ public class TheGame extends GameThread {
 		}
 	}
 
-//	/**
-//	 * Called when the screen is touched. Selects or unselects the action
-//	 * figure.
-//	 */
-//	public void selectFigure(MotionEvent event) {
-//		Point touchPoint = new Point((int) event.getX(), (int) event.getY());
-//
-//		// find the position in the array
-//		int x = (int) Math.floor(touchPoint.x / mGridSize);
-//		int y = (int) Math.floor((touchPoint.y - mStatusBarHight) / mGridSize);
-//
-//		// if selected unselect, if unselected select
-//		if (x < mapSizeX && y < mapSizeY) {
-//			if (worldMap[x][y] != null) {
-//				if (worldMap[x][y].isSelected()) {
-//					unselect(x, y);
-//				} else {
-//					select(x, y);
-//				}
-//			}
-//		}
-//
-//	}
+	// /**
+	// * Called when the screen is touched. Selects or unselects the action
+	// * figure.
+	// */
+	// public void selectFigure(MotionEvent event) {
+	// Point touchPoint = new Point((int) event.getX(), (int) event.getY());
+	//
+	// // find the position in the array
+	// int x = (int) Math.floor(touchPoint.x / mGridSize);
+	// int y = (int) Math.floor((touchPoint.y - mStatusBarHight) / mGridSize);
+	//
+	// // if selected unselect, if unselected select
+	// if (x < mapSizeX && y < mapSizeY) {
+	// if (worldMap[x][y] != null) {
+	// if (worldMap[x][y].isSelected()) {
+	// unselect(x, y);
+	// } else {
+	// select(x, y);
+	// }
+	// }
+	// }
+	//
+	// }
 
 	/**
 	 * Unselects the action figure. Called when selected figure is touched or
@@ -337,8 +341,12 @@ public class TheGame extends GameThread {
 		worldMap[x][y].setSelected(false); // unselect the object, save text
 											// from the text field and clear the
 											// field
-		worldMap[x][y].setCommand(mCommandView.getText().toString());
-		mCommandView.setText("");
+		if (worldMap[x][y] != null) {
+		if (!(worldMap[x][y] instanceof EnemyActionFigure)) {
+			worldMap[x][y].setCommand(mCommandView.getText().toString());
+			mCommandView.setText("");
+		}
+		}
 	}
 
 	/**
@@ -365,11 +373,14 @@ public class TheGame extends GameThread {
 			}
 		}
 
-		worldMap[x][y].setSelected(true); // select the desired object
+		if (worldMap[x][y] != null) {
+			worldMap[x][y].setSelected(true); // select the desired object
+
 		if (!worldMap[x][y].getCommand().equals("")) {
 			mCommandView.setText(worldMap[x][y].getCommand()); // set command
 																// for
 																// the object
+		}
 		}
 	}
 
