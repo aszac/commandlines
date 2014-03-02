@@ -5,18 +5,10 @@ import java.util.List;
 
 public class EnemyActionFigure extends ActionFigure {
 
-	// protected int x; // x coordinate
-	// protected int y; // y coordinate
-
-	// private int hitPoints;
 	private ActionFigure targetEnemy = null;
-
-	// private boolean selected = false;
-	// protected int AP;
 
 	public EnemyActionFigure(int x, int y) {
 		super(x, y);
-		// AP = 100;
 	}
 
 	public static int getIndex(int x, int y) {
@@ -45,9 +37,10 @@ public class EnemyActionFigure extends ActionFigure {
 					this.attack(getDirectionOfEnemy(), 1);
 				} else {
 					Vertex nextMove = dijkstra.getPath().get(counter);
-					int moveX = nextMove.getX();
-					int moveY = nextMove.getY();
-					this.move(getMoveDirection(moveX, moveY), 1);
+					int moveY = nextMove.getX();
+					int moveX = nextMove.getY();
+					Direction d = getMoveDirection(moveX, moveY);
+					this.move(d, 1);
 					counter++;
 				}
 			}

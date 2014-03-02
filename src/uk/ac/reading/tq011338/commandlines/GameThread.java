@@ -58,7 +58,7 @@ public abstract class GameThread extends Thread {
 	abstract protected void drawWorld(Canvas canvas);
 
 //	abstract public void selectFigure(MotionEvent event);
-	abstract public ActionFigure getSelectedFigure();
+//	abstract public ActionFigure getSelectedFigure();
 	abstract public void setPlayersTurn(boolean isPlayersTurn);
 	
 	public void cleanup() {		

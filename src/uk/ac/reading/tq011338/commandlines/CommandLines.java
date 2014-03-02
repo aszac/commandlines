@@ -43,7 +43,7 @@ public class CommandLines extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				ActionFigure figure = mGameThread.getSelectedFigure();
+				ActionFigure figure = TheGame.getActiveFigure();
 				if (figure == null)
 					return;
 
@@ -62,7 +62,6 @@ public class CommandLines extends Activity {
 					visitor.visit(tree);
 				}
 
-				figure.setCommand("");
 				TheGame.isButtonClicked = true;
 				mCommandView.setText("");
 			}
@@ -74,10 +73,9 @@ public class CommandLines extends Activity {
 			@Override
 			public void onClick(View v) {
 				mCommandView.setText(""); // delete text and text in the object
-				ActionFigure figure = mGameThread.getSelectedFigure();
+				ActionFigure figure = TheGame.getActiveFigure();
 				if (figure == null)
 					return;
-				figure.setCommand("");
 			}
 		});
 

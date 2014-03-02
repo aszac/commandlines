@@ -48,6 +48,8 @@ public class TheGame extends GameThread {
 	public static List<ActionFigure> figureListForTurns = new ArrayList<ActionFigure>();
 	public static List<ActionFigure> figureList = new ArrayList<ActionFigure>();
 
+	private static ActionFigure activeFigure;
+
 	/**
 	 * Constructor called from the activity call, passing the current activity
 	 * 
@@ -105,61 +107,6 @@ public class TheGame extends GameThread {
 
 	}
 
-	// /**
-	// * Constructor called from the GameView class
-	// *
-	// * @param gameView
-	// */
-	// public TheGame(GameView gameView) {
-	// super(gameView);
-	// setGridSize(gameView);
-	//
-	// mFigure = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.face);
-	//
-	// mFigureSelected = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.selectedface);
-	//
-	// mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.square_teal);
-	//
-	// mStone = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.stone);
-	//
-	// mTree = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.tree);
-	//
-	// mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
-	// .getResources().getDisplayMetrics().density);
-	//
-	// mRecovery = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.cross);
-	//
-	// mAttack = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.angry);
-	//
-	// mDefend = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.defend);
-	//
-	// mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
-	// .getResources().getDisplayMetrics().density);
-	//
-	// mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.face_enemy);
-	//
-	// mRecovery_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.cross_enemy);
-	//
-	// mAttack_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.angry_enemy);
-	//
-	// mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
-	// R.drawable.defend_enemy);
-	//
-	// // TODO
-	// createNewWorld();
-	// }
-
 	public void createNewWorld() {
 		// TODO
 		ActionFigure figure1 = new ActionFigure(6, 6);
@@ -178,6 +125,7 @@ public class TheGame extends GameThread {
 	public void checkTurn() {
 		if (figureListForTurns.size() == 0) {
 			for (ActionFigure figure : figureList) {
+				figure.setAP(100);
 				figureListForTurns.add(figure);
 			}
 			// figureListForTurns = figureList;
@@ -188,7 +136,7 @@ public class TheGame extends GameThread {
 		if (!isPlayersTurn) {
 			for (ActionFigure figure : figureListForTurns) {
 				if (figure instanceof EnemyActionFigure) {
-					select(figure.getX(), figure.getY());
+					setActiveFigure(figure);
 					while (figure.AP >= 10) {
 						figure.decideOnNextMove();
 					}
@@ -200,11 +148,11 @@ public class TheGame extends GameThread {
 		isPlayersTurn = true;
 		for (ActionFigure figure : figureListForTurns) {
 			if (!(figure instanceof EnemyActionFigure)) {
+				setActiveFigure(figure);
 				if (isButtonClicked) {
 					figureListForTurns.remove(figure);
 					isButtonClicked = false;
-				} else {
-					select(figure.getX(), figure.getY());
+
 				}
 			}
 		}
@@ -246,7 +194,8 @@ public class TheGame extends GameThread {
 					}
 				} else if (worldMap[i][j] instanceof ActionFigure) {
 
-					if (!worldMap[i][j].isSelected()) { // use different bitmap
+					if (worldMap[i][j] != activeFigure) { // use different
+															// bitmap
 						// if not selected
 						uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j]
 								.getState();
@@ -302,101 +251,6 @@ public class TheGame extends GameThread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	// /**
-	// * Called when the screen is touched. Selects or unselects the action
-	// * figure.
-	// */
-	// public void selectFigure(MotionEvent event) {
-	// Point touchPoint = new Point((int) event.getX(), (int) event.getY());
-	//
-	// // find the position in the array
-	// int x = (int) Math.floor(touchPoint.x / mGridSize);
-	// int y = (int) Math.floor((touchPoint.y - mStatusBarHight) / mGridSize);
-	//
-	// // if selected unselect, if unselected select
-	// if (x < mapSizeX && y < mapSizeY) {
-	// if (worldMap[x][y] != null) {
-	// if (worldMap[x][y].isSelected()) {
-	// unselect(x, y);
-	// } else {
-	// select(x, y);
-	// }
-	// }
-	// }
-	//
-	// }
-
-	/**
-	 * Unselects the action figure. Called when selected figure is touched or
-	 * when another figure is being selected.
-	 * 
-	 * @param x
-	 *            - x position of the unselected object in the array
-	 * @param y
-	 *            - y position of the unselected object in the array
-	 */
-	private void unselect(int x, int y) {
-		worldMap[x][y].setSelected(false); // unselect the object, save text
-											// from the text field and clear the
-											// field
-		if (worldMap[x][y] != null) {
-		if (!(worldMap[x][y] instanceof EnemyActionFigure)) {
-			worldMap[x][y].setCommand(mCommandView.getText().toString());
-			mCommandView.setText("");
-		}
-		}
-	}
-
-	/**
-	 * Selects the touched action figure. Unselects all other objects.
-	 * 
-	 * @param x
-	 *            - x position of the selected object in the array
-	 * @param y
-	 *            - y position of the selected object in the array
-	 */
-	private void select(int x, int y) {
-		for (int i = 0; i < mapSizeX; i++) { // unselect all selected figures
-			for (int j = 0; j < mapSizeY; j++) {
-				if (worldMap[i][j] != null && worldMap[i][j].isSelected()) { // except
-																				// if
-																				// its
-																				// the
-																				// current
-																				// one
-					if (x != i && y != j) {
-						unselect(i, j);
-					}
-				}
-			}
-		}
-
-		if (worldMap[x][y] != null) {
-			worldMap[x][y].setSelected(true); // select the desired object
-
-		if (!worldMap[x][y].getCommand().equals("")) {
-			mCommandView.setText(worldMap[x][y].getCommand()); // set command
-																// for
-																// the object
-		}
-		}
-	}
-
-	/**
-	 * Returns selected action figure to execute code on. Called from the
-	 * onClick function in CommandLines activity.
-	 */
-	public ActionFigure getSelectedFigure() {
-		for (int i = 0; i < mapSizeX; i++) { // unselect all selected figures
-			for (int j = 0; j < mapSizeY; j++) {
-				if (worldMap[i][j] != null && worldMap[i][j].isSelected()) {
-					return (ActionFigure) worldMap[i][j];
-				}
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -469,6 +323,16 @@ public class TheGame extends GameThread {
 
 	public void setPlayersTurn(boolean isPlayersTurn) {
 		TheGame.isPlayersTurn = isPlayersTurn;
+	}
+
+	public void setActiveFigure(ActionFigure activeFigure) {
+		if (activeFigure != getActiveFigure()) {
+			this.activeFigure = activeFigure;
+		}
+	}
+
+	public static ActionFigure getActiveFigure() {
+		return activeFigure;
 	}
 
 }

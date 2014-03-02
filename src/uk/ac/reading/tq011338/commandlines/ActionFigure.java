@@ -3,9 +3,6 @@ package uk.ac.reading.tq011338.commandlines;
 public class ActionFigure implements WorldObject {
 	protected int x; // x coordinate
 	protected int y; // y coordinate
-	protected boolean selected = false;
-
-	private String command = new String();
 
 	protected int hitPoints;
 	protected int AP;
@@ -35,7 +32,6 @@ public class ActionFigure implements WorldObject {
 	public ActionFigure(int x, int y) {
 		this.x = x;
 		this.y = y;
-		command = "";
 		hitPoints = 100;
 		this.state = State.MOVE;
 		AP = 100;
@@ -233,22 +229,6 @@ public class ActionFigure implements WorldObject {
 
 	public void setY(int y) {
 		this.y = y;
-	}
-
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
-	public String getCommand() {
-		return command;
-	}
-
-	public void setCommand(String command) {
-		this.command = command;
 	}
 
 	public State getState() {
