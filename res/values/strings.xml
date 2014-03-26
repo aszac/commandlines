@@ -14,5 +14,14 @@
     <string name="start">START</string>
     <string name="help">HELP</string>
     <string name="exit">EXIT</string>
-    <string name="exit_button">Return to Menu</string>    
+    <string name="exit_button">Return to Menu</string>
+    <string name="attackId">Attack</string>
+    <string name="attackText">attack(UP/DOWN/LEFT/RIGHT, TIMES);</string>
+    <string name="ok">OK</string>
+    <string name="healId">Heal</string>
+    <string name="healText">heal(TIMES);</string>
+    <string name="defendId">Defend</string>
+    <string name="defendText">defend();</string>
+    <string name="moveId">Move</string>
+    <string name="moveText">move(UP/DOWN/LEFT/RIGHT, TIMES);</string>    
 </resources>
