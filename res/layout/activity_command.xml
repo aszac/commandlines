@@ -9,6 +9,15 @@
         android:layout_height="fill_parent"
         android:layout_weight="60" />
 
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textColor="#ffffffff"
+        android:textSize="20sp"
+        android:visibility="visible" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
@@ -18,37 +27,36 @@
             android:id="@+id/commandListLayout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="10" 
-            android:orientation="horizontal">
+            android:layout_weight="10"
+            android:orientation="horizontal" >
 
             <ImageButton
                 android:id="@+id/attackButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/angry"
-                android:contentDescription="attack button" />
+                android:contentDescription="attack button"
+                android:src="@drawable/angry" />
 
             <ImageButton
                 android:id="@+id/healButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/cross" 
-                android:contentDescription="heal button"/>
+                android:contentDescription="heal button"
+                android:src="@drawable/cross" />
 
             <ImageButton
                 android:id="@+id/moveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/face" 
-                android:contentDescription="move button"/>
+                android:contentDescription="move button"
+                android:src="@drawable/face" />
 
             <ImageButton
                 android:id="@+id/defendButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/defend" 
-                android:contentDescription="defend button"/>
-
+                android:contentDescription="defend button"
+                android:src="@drawable/defend" />
         </LinearLayout>
 
         <EditText
@@ -68,20 +76,20 @@
             android:layout_height="wrap_content"
             android:layout_weight="10"
             android:orientation="horizontal" >
+
             <Button
                 android:id="@+id/clear_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="50"
                 android:text="@string/clear" />
+
             <Button
                 android:id="@+id/run_button"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="50"
                 android:text="@string/run" />
-
-
         </LinearLayout>
     </LinearLayout>
 

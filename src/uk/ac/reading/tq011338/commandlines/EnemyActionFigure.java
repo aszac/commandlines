@@ -11,40 +11,25 @@ public class EnemyActionFigure extends ActionFigure {
 		super(x, y);
 	}
 
-	public static int getIndex(int x, int y) {
-		int counter = y * TheGame.mapSizeY + x;
-
-		for (int i = 0; i <= x; i++) {
-			for (int j = 0; j <= y; j++) {
-				if (TheGame.worldMap[i][j] != null) {
-					counter--;
-				}
-			}
-		}
-		return counter;
-	}
-
 	public void decideOnNextMove() {
 		targetEnemy = findClosestEnemy();
 		Dijkstra dijkstra = new Dijkstra();
-		dijkstra.pathfinding(getIndex(this.getX(), this.getY()),
-				getIndex(targetEnemy.getX(), targetEnemy.getY()));
+
+		dijkstra.pathfinding(this.getX(), this.getY(), targetEnemy.getX(),
+				targetEnemy.getY());
 		int counter = 0;
 
 		if (targetEnemy.getHitPoints() <= (this.hitPoints + this.AP)) {
-			while (AP != 0) {
-				if (getDistanceToClosestEnemy() <= 1) {
-					this.attack(getDirectionOfEnemy(), 1);
-				} else {
-					Vertex nextMove = dijkstra.getPath().get(counter);
-					int moveY = nextMove.getX();
-					int moveX = nextMove.getY();
-					Direction d = getMoveDirection(moveX, moveY);
-					this.move(d, 1);
-					counter++;
-				}
+			if (isDistanceToEnemyOne()) {
+				this.attack(getDirectionOfEnemy(), 1);
+			} else if (dijkstra.getPath().size() >= counter) {
+				Vertex nextMove = dijkstra.getPath().get(counter);
+				int moveY = nextMove.getX();
+				int moveX = nextMove.getY();
+				Direction d = getMoveDirection(moveY, moveX);
+				this.move(d, 1);
+				counter++;
 			}
-
 		} else if (this.AP < 10) {
 			this.defend();
 		} else if (this.hitPoints < 40) { // run away
@@ -55,22 +40,31 @@ public class EnemyActionFigure extends ActionFigure {
 	}
 
 	private Direction getMoveDirection(int moveX, int moveY) {
-		if (moveX < this.getX()) {
-			return Direction.UP;
-		} else if (moveX > this.getX()) {
-			return Direction.DOWN;
-		} else if (moveY > this.getY()) {
-			return Direction.RIGHT;
-		} else {
-			return Direction.LEFT;
+		if (moveY == this.getY()) {
+			if (moveX < this.getX()) {
+				return Direction.LEFT;
+			} else if (moveX > this.getX()) {
+				return Direction.RIGHT;
+			}
+		} else if (moveX == this.getX()) {
+			if (moveY > this.getY()) {
+				return Direction.DOWN;
+			} else {
+				return Direction.UP;
+			}
 		}
+		return null;
 	}
 
-	public int getDistanceToClosestEnemy() {
-		int x = this.getX() - targetEnemy.getX();
-		int y = this.getY() - targetEnemy.getY();
+	public boolean isDistanceToEnemyOne() {
+		double x = this.getX() - targetEnemy.getX();
+		double y = this.getY() - targetEnemy.getY();
 
-		return (int) Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+		if (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) == 1.00) {
+			return true;
+		} else
+			return false;
+
 	}
 
 	public Direction getOppositeDirection() {
@@ -135,20 +129,4 @@ public class EnemyActionFigure extends ActionFigure {
 
 		return closestEnemy;
 	}
-
-	// public boolean isSelected(){
-	// return selected;
-	// }
-	//
-	// public void setSelected(boolean selected) {
-	// this.selected = selected;
-	// }
-	//
-	// public int getAP() {
-	// return AP;
-	// }
-	//
-	// public void setAP(int aP) {
-	// AP = aP;
-	// }
 }

@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
 import uk.ac.reading.tq011338.parser.CommandLinesLexer;
 import uk.ac.reading.tq011338.parser.CommandLinesParser;
 import uk.ac.reading.tq011338.parser.ExtendedCommandLinesBaseVisitor;
@@ -15,6 +16,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.app.Activity;
 
 public class CommandLines extends Activity {
@@ -25,10 +28,9 @@ public class CommandLines extends Activity {
 	private Button mRunButton;
 	private Button mClearButton;
 	private EditText mCommandView;
+	
+	private ImageButton attackButton;
 
-	private GestureDetector gestureDetector;
-
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_command); // inflate the layout
@@ -36,13 +38,12 @@ public class CommandLines extends Activity {
 		mView = (GameView) findViewById(R.id.gameArea); // get the GameView
 		mGameThread = new TheGame(mView, this);
 		mView.setThread(mGameThread);
+        mView.setStatusView((TextView)findViewById(R.id.text));
 
 		mRunButton = (Button) findViewById(R.id.run_button);
 		mRunButton.setOnClickListener(new View.OnClickListener() {
 
-			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				ActionFigure figure = TheGame.getActiveFigure();
 				if (figure == null)
 					return;
@@ -57,7 +58,6 @@ public class CommandLines extends Activity {
 					ParserRuleContext tree = parser.parse();
 					if (parser.getNumberOfSyntaxErrors() == 0) {
 
-					ParseTreeWalker walker = new ParseTreeWalker();
 					ExtendedCommandLinesBaseVisitor visitor = new ExtendedCommandLinesBaseVisitor(figure);
 					visitor.visit(tree);
 				}
@@ -70,7 +70,6 @@ public class CommandLines extends Activity {
 		mClearButton = (Button) findViewById(R.id.clear_button);
 		mClearButton.setOnClickListener(new View.OnClickListener() {
 
-			@Override
 			public void onClick(View v) {
 				mCommandView.setText(""); // delete text and text in the object
 				ActionFigure figure = TheGame.getActiveFigure();
@@ -80,35 +79,17 @@ public class CommandLines extends Activity {
 		});
 
 		mCommandView = (EditText) findViewById(R.id.commandView);
-
-		gestureDetector = new GestureDetector(gestureListener);
-
 	}
 
-	SimpleOnGestureListener gestureListener = new SimpleOnGestureListener() {
-
-	};
-
-//	public boolean onTouchEvent(MotionEvent event) {
-//		int action = event.getAction();
-//		if (action == MotionEvent.ACTION_DOWN) {
-//			mGameThread.selectFigure(event);
-//		}
-//		return gestureDetector.onTouchEvent(event);
-//	}
-
-	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		mView.cleanup();
 
 		mGameThread = null;
+        mView = null;
 	}
 
-	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 	}
 

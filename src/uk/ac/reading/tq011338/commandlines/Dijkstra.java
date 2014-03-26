@@ -71,18 +71,47 @@ public class Dijkstra {
 
 	public List<Vertex> getShortestPathTo(Vertex target) {
 		path = new ArrayList<Vertex>();
+		
+		// find shortest path to the target
+		if (target.previous == null) {
+			for (Edge e : target.adjacencies) {
+				 if ( (e.target.minDistance + 1) < target.minDistance) {
+					 target.previous = e.target;
+					 target.minDistance = e.target.minDistance + 1;
+				 }
+			}
+		}
+		
 		for (Vertex vertex = target; vertex != null; vertex = vertex.previous)
 			path.add(vertex);
+		
+		// remove the source and goal from the path
+		path.remove(0);
 		Collections.reverse(path);
+		path.remove(0);
 		return path;
 	}
 
-	public void pathfinding(int source, int goal) {
+	public void pathfinding(int sourceX, int sourceY, int goalX, int goalY) {
 		initializeAllVertices();
+		int goal = 0;
+		int source = 0;
 		for (Vertex currentVertex : vertices) {
 			int currentX = currentVertex.getX();
 			int currentY = currentVertex.getY();
-			if (TheGame.worldMap[currentX][currentY] == null) {
+			
+			boolean isSourceOrGoal = false;
+			// get source and goal index
+			if (sourceX == currentX && sourceY == currentY) {
+				source = vertices.indexOf(currentVertex);
+				isSourceOrGoal = true;
+			}
+			if (goalX == currentX && goalY == currentY) {
+				goal = vertices.indexOf(currentVertex);
+				isSourceOrGoal = true;
+			}			
+			
+			if (TheGame.worldMap[currentX][currentY] == null || isSourceOrGoal) {
 				for (Vertex vertex : vertices) {
 					if (currentVertex != vertex) {
 						int vertexX = vertex.getX();

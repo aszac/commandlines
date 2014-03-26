@@ -1,20 +1,28 @@
 package uk.ac.reading.tq011338.commandlines;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	private LayoutInflater layoutInflater;
-	private Context parentContext;
-	private Bitmap mFigure;
-
+	private Handler mHandler;
+	private TextView mStatusView;
+	
+	
 	private volatile GameThread thread;
 
 	public GameView(Context context, AttributeSet attributeSet) {
@@ -26,22 +34,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		layoutInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		parentContext = context;
-
+		//Set up a handler for messages from GameThread
+		mHandler = new Handler() {
+			public void handleMessage(Message m) {
+				if (m != null) {
+					mStatusView.setVisibility(m.getData().getInt("viz"));
+				}
+ 			}
+		};
 	}
 
-	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 
-	}
-
-	public void addNewActionFigure(Canvas canvas) {
-		mFigure = BitmapFactory.decodeResource(parentContext.getResources(),
-				R.drawable.face);
-		if (canvas == null)
-			return;
-		canvas.drawBitmap(mFigure, 0, 0, null);
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -56,38 +61,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			thread.setRunning(true);
 			
 			if(thread.getState() == Thread.State.NEW){
-				//Just start the new thread
 				thread.start();
 			}
 			else {
 				if(thread.getState() == Thread.State.TERMINATED){
-					//Start a new thread
-					//Should be this to update screen with old game: new GameThread(this, thread);
-					//The method should set all fields in new thread to the value of old thread's fields 
 					thread = new TheGame(this, null); 
 					thread.setRunning(true);
 					thread.start();
 				}
 			}
 		}
-//		thread = new TheGame(this);
-//		thread.setRunning(true);
-//		thread.start();
-
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		thread.setRunning(false);
 	}
 
-	protected void onDraw(Canvas canvas) {
-		addNewActionFigure(canvas);
-
-	}
-
 	public void setThread(GameThread newThread) {
 		thread = newThread;
 
+	}
+	
+	public Handler getmHandler() {
+		return mHandler;
+	}
+
+	public void setmHandler(Handler mHandler) {
+		this.mHandler = mHandler;
 	}
 
 	public GameThread getThread() {
@@ -105,6 +105,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 		
 		SurfaceHolder holder = getHolder();
 		holder.removeCallback(this);
+	}
+	
+	public TextView getStatusView() {
+		return mStatusView;
+	}
+
+	public void setStatusView(TextView mStatusView) {
+		this.mStatusView = mStatusView;
 	}
 
 }

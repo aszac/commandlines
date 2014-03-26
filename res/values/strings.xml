@@ -7,5 +7,12 @@
     <string name="commandPane">Type in the commands</string>
     <string name="run">Run</string>
     <string name="clear">Clear</string>
-    <string name="figure">Action figure</string>    
+    <string name="figure">Action figure</string>
+    <string name="mode_lose">You lost!</string>
+    <string name="mode_win">You won!</string>
+    <string name="restart_button">Restart Game</string>
+    <string name="start">START</string>
+    <string name="help">HELP</string>
+    <string name="exit">EXIT</string>
+    <string name="exit_button">Return to Menu</string>    
 </resources>

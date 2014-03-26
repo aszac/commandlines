@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -41,15 +43,16 @@ public class TheGame extends GameThread {
 	private ImageView img;
 	private EditText mCommandView;
 	private Activity activity;
+	private GameView gameView;
 
 	protected static WorldObject[][] worldMap = new WorldObject[mapSizeX][mapSizeY];
-	public static boolean isPlayersTurn = false;
 	public static boolean isButtonClicked = false;
 	public static List<ActionFigure> figureListForTurns = new ArrayList<ActionFigure>();
 	public static List<ActionFigure> figureList = new ArrayList<ActionFigure>();
+	private boolean isDialogDisplayed;
 
 	private static ActionFigure activeFigure;
-
+	
 	/**
 	 * Constructor called from the activity call, passing the current activity
 	 * 
@@ -59,6 +62,7 @@ public class TheGame extends GameThread {
 	public TheGame(final GameView gameView, Activity activity) {
 		super(gameView, activity);
 		this.activity = activity;
+		this.gameView = gameView;
 
 		setGridSize(gameView);
 		mFigure = BitmapFactory.decodeResource(gameView.getResources(),
@@ -123,41 +127,29 @@ public class TheGame extends GameThread {
 	}
 
 	public void checkTurn() {
+		checkIfGameOver();
+		
 		if (figureListForTurns.size() == 0) {
 			for (ActionFigure figure : figureList) {
 				figure.setAP(100);
 				figureListForTurns.add(figure);
 			}
-			// figureListForTurns = figureList;
-			isPlayersTurn = false;
 		}
 
-		// move all the enemy figures
-		if (!isPlayersTurn) {
-			for (ActionFigure figure : figureListForTurns) {
-				if (figure instanceof EnemyActionFigure) {
-					setActiveFigure(figure);
-					while (figure.AP >= 10) {
-						figure.decideOnNextMove();
-					}
-					figureListForTurns.remove(figure);
-				}
+		setActiveFigure(figureListForTurns.get(0));
+		if (activeFigure instanceof EnemyActionFigure) {
+			if (activeFigure.AP > 0) {
+				activeFigure.decideOnNextMove();
+			} else {
+				figureListForTurns.remove(activeFigure);
+			}
+		} else {
+			if (isButtonClicked) {
+				figureListForTurns.remove(activeFigure);
+				isButtonClicked = false;
 			}
 		}
 
-		isPlayersTurn = true;
-		for (ActionFigure figure : figureListForTurns) {
-			if (!(figure instanceof EnemyActionFigure)) {
-				setActiveFigure(figure);
-				if (isButtonClicked) {
-					figureListForTurns.remove(figure);
-					isButtonClicked = false;
-
-				}
-			}
-		}
-
-		checkIfGameOver();
 	}
 
 	/**
@@ -228,7 +220,7 @@ public class TheGame extends GameThread {
 		}
 
 		// execute game
-		checkTurn();
+//		checkTurn();
 	}
 
 	/**
@@ -300,7 +292,7 @@ public class TheGame extends GameThread {
 		for (int i = 0; i < mapSizeX; i++) {
 			for (int j = 0; j < mapSizeY; j++) {
 				if (worldMap[i][j] instanceof ActionFigure) {
-					if (worldMap[i][j] instanceof ActionFigure) {
+					if (worldMap[i][j] instanceof EnemyActionFigure) {
 						numberOfEnemyFigures++;
 					} else {
 						numberOfFigures++;
@@ -309,20 +301,18 @@ public class TheGame extends GameThread {
 			}
 		}
 		if (numberOfFigures == 0) {
+			this.setRunning(false);
+			showGameOverDialog(R.string.mode_lose);
+//			setState(GameThread.STATE_LOSE);
 			return true;
 		}
 		if (numberOfEnemyFigures == 0) {
+			this.setRunning(false);
+			showGameOverDialog(R.string.mode_win);
+//			setState(GameThread.STATE_WIN);
 			return true;
 		}
 		return false;
-	}
-
-	public boolean isPlayersTurn() {
-		return isPlayersTurn;
-	}
-
-	public void setPlayersTurn(boolean isPlayersTurn) {
-		TheGame.isPlayersTurn = isPlayersTurn;
 	}
 
 	public void setActiveFigure(ActionFigure activeFigure) {
@@ -335,4 +325,36 @@ public class TheGame extends GameThread {
 		return activeFigure;
 	}
 
+	
+	private void showGameOverDialog(int messageId) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(gameView.getContext());
+		builder.setTitle(gameView.getResources().getString(messageId));
+		builder.setCancelable(false);
+		
+		builder.setPositiveButton(R.string.restart_button, 
+				new DialogInterface.OnClickListener() {
+										
+					public void onClick(DialogInterface dialog, int which) {					
+						isDialogDisplayed = false;
+						activity.finish();
+					}
+				});
+		
+		builder.setNegativeButton(R.string.exit_button, 
+				new DialogInterface.OnClickListener() {
+										
+					public void onClick(DialogInterface dialog, int which) {					
+						isDialogDisplayed = false;
+						activity.finish();
+					}
+				});
+		
+		activity.runOnUiThread(new Runnable() {
+			public void run () {
+				isDialogDisplayed = true;
+				builder.show();
+			}
+		});
+		
+	}
 }

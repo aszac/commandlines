@@ -141,10 +141,8 @@ public class ActionFigure implements WorldObject {
 	}
 
 	public void attack(Direction direction, int force) {
-
-		// TODO reduce turns
 		state = State.ATTACK;
-		AP = AP - (20 * force);
+		AP = AP - (10 * force);
 		if (!checkIfOutOfBounds(direction)) {
 			// check if enemy present in the field && hit
 			switch (direction) {
@@ -196,13 +194,12 @@ public class ActionFigure implements WorldObject {
 	}
 
 	public void checkIfKilled(int x, int y) {
-		if (TheGame.worldMap[x][y].getHitPoints() <= 0) {			
+		if (TheGame.worldMap[x][y].getHitPoints() <= 0) {
 			TheGame.figureList.remove(TheGame.worldMap[x][y]);
 			try {
 				TheGame.figureListForTurns.remove(TheGame.worldMap[x][y]);
-			}
-			catch (Exception exception) {
-				
+			} catch (Exception exception) {
+
 			}
 			TheGame.worldMap[x][y] = null;
 		}
@@ -246,8 +243,6 @@ public class ActionFigure implements WorldObject {
 	public void reduceHitPoints(int hitPoints) {
 		this.hitPoints = this.hitPoints - hitPoints;
 	}
-	
-	
 
 	public int getAP() {
 		return AP;
@@ -260,7 +255,7 @@ public class ActionFigure implements WorldObject {
 	@Override
 	public void decideOnNextMove() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
