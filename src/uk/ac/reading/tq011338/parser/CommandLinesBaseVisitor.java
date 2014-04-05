@@ -2,8 +2,6 @@ package uk.ac.reading.tq011338.parser;
 
 // Generated from CommandLines.g4 by ANTLR 4.0
 import org.antlr.v4.runtime.tree.*;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.ParserRuleContext;
 
 public class CommandLinesBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements CommandLinesVisitor<T> {
 	@Override public T visitAtom(CommandLinesParser.AtomContext ctx) { return visitChildren(ctx); }

@@ -59,4 +59,10 @@ public class Obstacle implements WorldObject{
 		return null;
 	}
 
+	@Override
+	public void setAP(int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

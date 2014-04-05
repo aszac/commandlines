@@ -21,7 +21,6 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 
 public class CommandLines extends Activity {
@@ -63,7 +62,7 @@ public class CommandLines extends Activity {
 		mRunButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				ActionFigure figure = TheGame.getActiveFigure();
+				ActionFigure figure = mGameThread.getActiveFigure();
 				if (figure == null)
 					return;
 
@@ -83,7 +82,7 @@ public class CommandLines extends Activity {
 					visitor.visit(tree);
 				}
 
-				TheGame.isButtonClicked = true;
+				mGameThread.isButtonClicked = true;
 				mCommandView.setText("");
 			}
 		});
@@ -93,7 +92,7 @@ public class CommandLines extends Activity {
 
 			public void onClick(View v) {
 				mCommandView.setText(""); // delete text and text in the object
-				ActionFigure figure = TheGame.getActiveFigure();
+				ActionFigure figure = mGameThread.getActiveFigure();
 				if (figure == null)
 					return;
 			}
@@ -102,7 +101,7 @@ public class CommandLines extends Activity {
 		mCommandView = (MultiAutoCompleteTextView) findViewById(R.id.commandView);
 		String[] commands = mView.getResources().getStringArray(
 				R.array.list_of_commands);
-		ArrayAdapter adapter = new ArrayAdapter(this,
+		ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this,
 				android.R.layout.simple_list_item_1, commands);
 		mCommandView.setAdapter(adapter);
 		mCommandView.setTokenizer(new NewLineTokenizer());

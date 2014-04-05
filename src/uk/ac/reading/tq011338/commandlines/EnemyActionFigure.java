@@ -7,13 +7,13 @@ public class EnemyActionFigure extends ActionFigure {
 
 	private ActionFigure targetEnemy = null;
 
-	public EnemyActionFigure(int x, int y) {
-		super(x, y);
+	public EnemyActionFigure(int x, int y, TheGame mGameThread) {
+		super(x, y, mGameThread);
 	}
 
 	public void decideOnNextMove() {
 		targetEnemy = findClosestEnemy();
-		Dijkstra dijkstra = new Dijkstra();
+		Dijkstra dijkstra = new Dijkstra(mGameThread.worldMap);
 
 		dijkstra.pathfinding(this.getX(), this.getY(), targetEnemy.getX(),
 				targetEnemy.getY());
@@ -107,11 +107,11 @@ public class EnemyActionFigure extends ActionFigure {
 		double closestDistance = 100;
 
 		// create enemy list
-		for (int i = 0; i < TheGame.worldMap.length; i++) {
-			for (int j = 0; j < TheGame.worldMap.length; j++) {
-				if (TheGame.worldMap[i][j] instanceof ActionFigure) {
-					if (!(TheGame.worldMap[i][j] instanceof EnemyActionFigure)) {
-						enemyList.add((ActionFigure) TheGame.worldMap[i][j]);
+		for (int i = 0; i < mGameThread.worldMap.length; i++) {
+			for (int j = 0; j < mGameThread.worldMap.length; j++) {
+				if (mGameThread.worldMap[i][j] instanceof ActionFigure) {
+					if (!(mGameThread.worldMap[i][j] instanceof EnemyActionFigure)) {
+						enemyList.add((ActionFigure) mGameThread.worldMap[i][j]);
 					}
 				}
 			}

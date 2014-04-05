@@ -1,38 +1,28 @@
 package uk.ac.reading.tq011338.commandlines;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-	private LayoutInflater layoutInflater;
 	private Handler mHandler;
 	private TextView mStatusView;
 	
 	
 	private volatile GameThread thread;
 
+	@SuppressLint("HandlerLeak")
 	public GameView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 
 		SurfaceHolder holder = getHolder();
 		holder.addCallback(this);
-
-		layoutInflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		//Set up a handler for messages from GameThread
 		mHandler = new Handler() {

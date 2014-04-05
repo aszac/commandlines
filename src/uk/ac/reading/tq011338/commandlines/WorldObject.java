@@ -22,4 +22,5 @@ public interface WorldObject {
 	public void decideOnNextMove();
 	
 	public JSONObject toJSON() throws JSONException;
+	public void setAP(int i);
 }

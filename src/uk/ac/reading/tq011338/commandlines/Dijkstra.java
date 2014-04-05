@@ -44,6 +44,11 @@ public class Dijkstra {
 
 	List<Vertex> vertices;
 	List<Vertex> path;
+	WorldObject[][] worldMap;
+
+	public Dijkstra(WorldObject[][] worldMap) {
+		this.worldMap = worldMap;
+	}
 
 	public void computePaths(Vertex source) {
 		source.minDistance = 0.;
@@ -111,12 +116,12 @@ public class Dijkstra {
 				isSourceOrGoal = true;
 			}			
 			
-			if (TheGame.worldMap[currentX][currentY] == null || isSourceOrGoal) {
+			if (worldMap[currentX][currentY] == null || isSourceOrGoal) {
 				for (Vertex vertex : vertices) {
 					if (currentVertex != vertex) {
 						int vertexX = vertex.getX();
 						int vertexY = vertex.getY();
-						if (TheGame.worldMap[vertexX][vertexY] == null) {
+						if (worldMap[vertexX][vertexY] == null) {
 							if ((currentX - 1) == vertexX
 									&& currentY == vertexY) {
 								currentVertex.adjacencies.add(new Edge(vertex,
@@ -144,7 +149,7 @@ public class Dijkstra {
 		}
 
 		computePaths(vertices.get(source));
-		List<Vertex> path = getShortestPathTo(vertices.get(goal));
+		getShortestPathTo(vertices.get(goal));
 	}
 
 	public void initializeAllVertices() {

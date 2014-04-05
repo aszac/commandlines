@@ -4,7 +4,6 @@ import java.util.List;
 
 import uk.ac.reading.tq011338.commandlines.ActionFigure;
 import uk.ac.reading.tq011338.commandlines.ActionFigure.Direction;
-import uk.ac.reading.tq011338.commandlines.TheGame;
 import uk.ac.reading.tq011338.parser.CommandLinesParser.AtomContext;
 import uk.ac.reading.tq011338.parser.CommandLinesParser.AttackContext;
 import uk.ac.reading.tq011338.parser.CommandLinesParser.DefendContext;

@@ -11,6 +11,7 @@ public class ActionFigure implements WorldObject {
 	protected int hitPoints;
 	protected int AP;
 	protected State state;
+	protected GameThread mGameThread;
 
 	/**
 	 * Used for direction of motion for an action figure
@@ -33,15 +34,17 @@ public class ActionFigure implements WorldObject {
 	 * @param y
 	 *            - initial y location on the screen
 	 */
-	public ActionFigure(int x, int y) {
+	public ActionFigure(int x, int y, TheGame mGameThread) {
 		this.x = x;
 		this.y = y;
+		this.mGameThread = mGameThread;
 		hitPoints = 100;
 		this.state = State.MOVE;
 		AP = 100;
 	}
 	
-	public ActionFigure(JSONObject json) throws JSONException {
+	public ActionFigure(JSONObject json, TheGame mGameThread) throws JSONException {
+		this.mGameThread = mGameThread;
 		x = json.getInt(JSON_X);
 		y = json.getInt(JSON_Y);
 		hitPoints = json.getInt(JSON_HP);
@@ -72,19 +75,19 @@ public class ActionFigure implements WorldObject {
 			// update the position in the world map and update coordinates
 			switch (direction) {
 			case UP:
-				TheGame.updatePosition(this, x, y - 1);
+				updatePosition(this, x, y - 1);
 				y--;
 				break;
 			case DOWN:
-				TheGame.updatePosition(this, x, y + 1);
+				updatePosition(this, x, y + 1);
 				y++;
 				break;
 			case RIGHT:
-				TheGame.updatePosition(this, x + 1, y);
+				updatePosition(this, x + 1, y);
 				x++;
 				break;
 			case LEFT:
-				TheGame.updatePosition(this, x - 1, y);
+				updatePosition(this, x - 1, y);
 				x--;
 				break;
 			default:
@@ -127,13 +130,13 @@ public class ActionFigure implements WorldObject {
 	public boolean checkIfOtherObjectInCell(Direction direction) {
 		switch (direction) {
 		case UP:
-			return TheGame.worldMap[x][y - 1] != null;
+			return mGameThread.worldMap[x][y - 1] != null;
 		case DOWN:
-			return TheGame.worldMap[x][y + 1] != null;
+			return mGameThread.worldMap[x][y + 1] != null;
 		case RIGHT:
-			return TheGame.worldMap[x + 1][y] != null;
+			return mGameThread.worldMap[x + 1][y] != null;
 		case LEFT:
-			return TheGame.worldMap[x - 1][y] != null;
+			return mGameThread.worldMap[x - 1][y] != null;
 		default:
 			return true;
 		}
@@ -141,7 +144,7 @@ public class ActionFigure implements WorldObject {
 	}
 
 	public boolean checkIfEnemyInGrid(int x, int y) {
-		if (TheGame.worldMap[x][y] instanceof ActionFigure) {
+		if (mGameThread.worldMap[x][y] instanceof ActionFigure) {
 			return true;
 		} else {
 			return false;
@@ -156,25 +159,25 @@ public class ActionFigure implements WorldObject {
 			switch (direction) {
 			case UP:
 				if (checkIfEnemyInGrid(x, y - 1)) {
-					TheGame.worldMap[x][y - 1].reduceHitPoints(10 * force);
+					mGameThread.worldMap[x][y - 1].reduceHitPoints(10 * force);
 					checkIfKilled(x, y - 1);
 				}
 				break;
 			case DOWN:
 				if (checkIfEnemyInGrid(x, y + 1)) {
-					TheGame.worldMap[x][y + 1].reduceHitPoints(10 * force);
+					mGameThread.worldMap[x][y + 1].reduceHitPoints(10 * force);
 					checkIfKilled(x, y + 1);
 				}
 				break;
 			case RIGHT:
 				if (checkIfEnemyInGrid(x + 1, y)) {
-					TheGame.worldMap[x + 1][y].reduceHitPoints(10 * force);
+					mGameThread.worldMap[x + 1][y].reduceHitPoints(10 * force);
 					checkIfKilled(x + 1, y);
 				}
 				break;
 			case LEFT:
 				if (checkIfEnemyInGrid(x - 1, y)) {
-					TheGame.worldMap[x - 1][y].reduceHitPoints(10 * force);
+					mGameThread.worldMap[x - 1][y].reduceHitPoints(10 * force);
 					checkIfKilled(x - 1, y);
 				}
 				break;
@@ -202,14 +205,14 @@ public class ActionFigure implements WorldObject {
 	}
 
 	public void checkIfKilled(int x, int y) {
-		if (TheGame.worldMap[x][y].getHitPoints() <= 0) {
-			TheGame.figureList.remove(TheGame.worldMap[x][y]);
+		if (mGameThread.worldMap[x][y].getHitPoints() <= 0) {
+			mGameThread.objectList.remove(mGameThread.worldMap[x][y]);
 			try {
-				TheGame.figureListForTurns.remove(TheGame.worldMap[x][y]);
+				mGameThread.figureListForTurns.remove(mGameThread.worldMap[x][y]);
 			} catch (Exception exception) {
 
 			}
-			TheGame.worldMap[x][y] = null;
+			mGameThread.worldMap[x][y] = null;
 		}
 	}
 
@@ -264,6 +267,28 @@ public class ActionFigure implements WorldObject {
 	public void decideOnNextMove() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	/**
+	 * Updates position of the object in the array and the position fields in
+	 * the object.
+	 * 
+	 * @param figure
+	 *            - the action figure object that changes position
+	 * @param newX
+	 *            - new x coordinate
+	 * @param newY
+	 *            - new y coordinate
+	 */
+	@SuppressWarnings("static-access")
+	public void updatePosition(ActionFigure figure, int newX, int newY) {
+		mGameThread.worldMap[figure.getX()][figure.getY()] = null;
+		mGameThread.worldMap[newX][newY] = figure;
+		try {
+			mGameThread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public JSONObject toJSON() throws JSONException {

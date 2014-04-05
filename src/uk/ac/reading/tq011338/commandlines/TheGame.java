@@ -1,8 +1,6 @@
 package uk.ac.reading.tq011338.commandlines;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,9 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 public class TheGame extends GameThread {
 
@@ -31,36 +26,26 @@ public class TheGame extends GameThread {
 	private Bitmap mAttack_enemy;
 	private Bitmap mDefend_enemy;
 
-	private LayoutInflater layoutInflater;
 	protected final static int mapSizeX = 8;
 	protected final static int mapSizeY = 8;
 
 	protected static int mGridSize = 24;
 
-	private int mStatusBarHight;
-
-	private ImageView img;
-	private EditText mCommandView;
 	private Activity activity;
 	private GameView gameView;
-
-	protected static WorldObject[][] worldMap = new WorldObject[mapSizeX][mapSizeY];
-	public static boolean isButtonClicked = false;
-	public static List<ActionFigure> figureListForTurns = new ArrayList<ActionFigure>();
-	public static List<ActionFigure> figureList = new ArrayList<ActionFigure>();
 	private boolean isDialogDisplayed;
-
-	private static ActionFigure activeFigure;
+	private ActionFigure activeFigure;
 	private int selected_level;
-	
+
 	/**
 	 * Constructor called from the activity call, passing the current activity
 	 * 
 	 * @param gameView
 	 * @param activity
-	 * @param selected_level 
+	 * @param selected_level
 	 */
-	public TheGame(final GameView gameView, Activity activity, int selected_level) {
+	public TheGame(final GameView gameView, Activity activity,
+			int selected_level) {
 		super(gameView, activity, selected_level);
 		this.activity = activity;
 		this.gameView = gameView;
@@ -88,11 +73,6 @@ public class TheGame extends GameThread {
 		mDefend = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.defend);
 
-		mStatusBarHight = (int) Math.ceil(25 * gameView.getContext()
-				.getResources().getDisplayMetrics().density);
-
-		mCommandView = (EditText) this.activity.findViewById(R.id.commandView);
-
 		mFigure_enemy = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.face_enemy);
 
@@ -105,33 +85,41 @@ public class TheGame extends GameThread {
 		mDefend_enemy = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.defend_enemy);
 
-		// TODO
 		createNewWorld();
-
 	}
 
 	public void createNewWorld() {
+		worldMap = new WorldObject[mapSizeX][mapSizeY];
+		objectList = new ArrayList<WorldObject>();
+		figureListForTurns = new ArrayList<ActionFigure>();
 		// TODO
-		ActionFigure figure1 = new ActionFigure(6, 6);
-		figureList.add(figure1);
+		ActionFigure figure1 = new ActionFigure(6, 6, this);
+		objectList.add(figure1);
 		worldMap[6][6] = figure1;
 
-		EnemyActionFigure figure2 = new EnemyActionFigure(0, 1);
-		figureList.add(figure2);
+		EnemyActionFigure figure2 = new EnemyActionFigure(0, 1, this);
+		objectList.add(figure2);
 		worldMap[0][1] = figure2;
 
-		worldMap[4][2] = new Obstacle(4, 2);
-		worldMap[6][0] = new Obstacle(6, 0);
-		
-			}
+		Obstacle obstacle1 = new Obstacle(4, 2);
+		worldMap[4][2] = obstacle1;
+		objectList.add(obstacle1);
+
+		Obstacle obstacle2 = new Obstacle(6, 0);
+		worldMap[6][0] = obstacle2;
+		objectList.add(obstacle2);
+
+	}
 
 	public void checkTurn() {
 		checkIfGameOver();
-		
+
 		if (figureListForTurns.size() == 0) {
-			for (ActionFigure figure : figureList) {
-				figure.setAP(100);
-				figureListForTurns.add(figure);
+			for (WorldObject figure : objectList) {
+				if (figure instanceof ActionFigure) {
+					figure.setAP(100);
+					figureListForTurns.add((ActionFigure) figure);
+				}
 			}
 		}
 
@@ -164,8 +152,6 @@ public class TheGame extends GameThread {
 			for (int j = 0; j < mapSizeY; j++) {
 				canvas.drawBitmap(mGridTile, i * mGridSize, j * mGridSize, null);
 				if (worldMap[i][j] instanceof EnemyActionFigure) {
-					uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j]
-							.getState();
 					switch (worldMap[i][j].getState()) {
 					case ATTACK:
 						canvas.drawBitmap(mAttack_enemy, i * mGridSize, j
@@ -188,8 +174,6 @@ public class TheGame extends GameThread {
 					if (worldMap[i][j] != activeFigure) { // use different
 															// bitmap
 						// if not selected
-						uk.ac.reading.tq011338.commandlines.ActionFigure.State s = worldMap[i][j]
-								.getState();
 						switch (worldMap[i][j].getState()) {
 						case ATTACK:
 							canvas.drawBitmap(mAttack, i * mGridSize, j
@@ -218,29 +202,6 @@ public class TheGame extends GameThread {
 			}
 		}
 
-		// execute game
-//		checkTurn();
-	}
-
-	/**
-	 * Updates position of the object in the array and the position fields in
-	 * the object.
-	 * 
-	 * @param figure
-	 *            - the action figure object that changes position
-	 * @param newX
-	 *            - new x coordinate
-	 * @param newY
-	 *            - new y coordinate
-	 */
-	public static void updatePosition(ActionFigure figure, int newX, int newY) {
-		worldMap[figure.getX()][figure.getY()] = null;
-		worldMap[newX][newY] = figure;
-		try {
-			sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -287,27 +248,24 @@ public class TheGame extends GameThread {
 	private boolean checkIfGameOver() {
 		int numberOfFigures = 0;
 		int numberOfEnemyFigures = 0;
-		for (int i = 0; i < mapSizeX; i++) {
-			for (int j = 0; j < mapSizeY; j++) {
-				if (worldMap[i][j] instanceof ActionFigure) {
-					if (worldMap[i][j] instanceof EnemyActionFigure) {
-						numberOfEnemyFigures++;
-					} else {
-						numberOfFigures++;
-					}
+		for (WorldObject object : objectList) {
+			if (object instanceof ActionFigure) {
+				if (object instanceof EnemyActionFigure) {
+					numberOfEnemyFigures++;
+				} else {
+					numberOfFigures++;
 				}
 			}
 		}
+
 		if (numberOfFigures == 0) {
 			this.setRunning(false);
 			showGameOverDialog(R.string.mode_lose);
-//			setState(GameThread.STATE_LOSE);
 			return true;
 		}
 		if (numberOfEnemyFigures == 0) {
 			this.setRunning(false);
 			showGameOverDialog(R.string.mode_win);
-//			setState(GameThread.STATE_WIN);
 			return true;
 		}
 		return false;
@@ -319,40 +277,40 @@ public class TheGame extends GameThread {
 		}
 	}
 
-	public static ActionFigure getActiveFigure() {
+	public ActionFigure getActiveFigure() {
 		return activeFigure;
 	}
 
-	
 	private void showGameOverDialog(int messageId) {
-		final AlertDialog.Builder builder = new AlertDialog.Builder(gameView.getContext());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(
+				gameView.getContext());
 		builder.setTitle(gameView.getResources().getString(messageId));
 		builder.setCancelable(false);
-		
-		builder.setPositiveButton(R.string.restart_button, 
+
+		builder.setPositiveButton(R.string.restart_button,
 				new DialogInterface.OnClickListener() {
-										
-					public void onClick(DialogInterface dialog, int which) {					
+
+					public void onClick(DialogInterface dialog, int which) {
 						isDialogDisplayed = false;
 						activity.finish();
 					}
 				});
-		
-		builder.setNegativeButton(R.string.exit_button, 
+
+		builder.setNegativeButton(R.string.exit_button,
 				new DialogInterface.OnClickListener() {
-										
-					public void onClick(DialogInterface dialog, int which) {					
+
+					public void onClick(DialogInterface dialog, int which) {
 						isDialogDisplayed = false;
 						activity.finish();
 					}
 				});
-		
+
 		activity.runOnUiThread(new Runnable() {
-			public void run () {
+			public void run() {
 				isDialogDisplayed = true;
 				builder.show();
 			}
 		});
-		
+
 	}
 }
