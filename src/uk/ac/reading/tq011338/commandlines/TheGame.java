@@ -20,7 +20,6 @@ public class TheGame extends GameThread {
 	private Bitmap mFigure;
 	private Bitmap mFigureSelected;
 	private Bitmap mGridTile;
-	private Bitmap mStone;
 	private Bitmap mTree;
 
 	private Bitmap mRecovery;
@@ -52,17 +51,20 @@ public class TheGame extends GameThread {
 	private boolean isDialogDisplayed;
 
 	private static ActionFigure activeFigure;
+	private int selected_level;
 	
 	/**
 	 * Constructor called from the activity call, passing the current activity
 	 * 
 	 * @param gameView
 	 * @param activity
+	 * @param selected_level 
 	 */
-	public TheGame(final GameView gameView, Activity activity) {
-		super(gameView, activity);
+	public TheGame(final GameView gameView, Activity activity, int selected_level) {
+		super(gameView, activity, selected_level);
 		this.activity = activity;
 		this.gameView = gameView;
+		this.selected_level = selected_level;
 
 		setGridSize(gameView);
 		mFigure = BitmapFactory.decodeResource(gameView.getResources(),
@@ -73,9 +75,6 @@ public class TheGame extends GameThread {
 
 		mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.square_teal);
-
-		mStone = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.stone);
 
 		mTree = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.tree);
@@ -123,8 +122,8 @@ public class TheGame extends GameThread {
 
 		worldMap[4][2] = new Obstacle(4, 2);
 		worldMap[6][0] = new Obstacle(6, 0);
-
-	}
+		
+			}
 
 	public void checkTurn() {
 		checkIfGameOver();
@@ -240,7 +239,6 @@ public class TheGame extends GameThread {
 		try {
 			sleep(100);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

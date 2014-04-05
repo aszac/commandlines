@@ -1,6 +1,10 @@
 package uk.ac.reading.tq011338.commandlines;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ActionFigure implements WorldObject {
+	
 	protected int x; // x coordinate
 	protected int y; // y coordinate
 
@@ -35,6 +39,12 @@ public class ActionFigure implements WorldObject {
 		hitPoints = 100;
 		this.state = State.MOVE;
 		AP = 100;
+	}
+	
+	public ActionFigure(JSONObject json) throws JSONException {
+		x = json.getInt(JSON_X);
+		y = json.getInt(JSON_Y);
+		hitPoints = json.getInt(JSON_HP);
 	}
 
 	/**
@@ -81,9 +91,7 @@ public class ActionFigure implements WorldObject {
 				System.out.println("The direction is incorrect.");
 				break;
 			}
-
 			numberOfSteps--;
-
 		}
 
 	}
@@ -257,5 +265,14 @@ public class ActionFigure implements WorldObject {
 		// TODO Auto-generated method stub
 
 	}
-
+	
+	public JSONObject toJSON() throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put(JSON_TYPE, this.getClass().getName());
+		json.put(JSON_HP, hitPoints);
+		json.put(JSON_X, x);
+		json.put(JSON_Y, y);
+		
+		return json;
+	}
 }

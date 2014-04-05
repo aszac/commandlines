@@ -23,5 +23,25 @@
     <string name="defendId">Defend</string>
     <string name="defendText">defend();</string>
     <string name="moveId">Move</string>
-    <string name="moveText">move(UP/DOWN/LEFT/RIGHT, TIMES);</string>    
+    <string name="moveText">move(UP/DOWN/LEFT/RIGHT, TIMES);</string>
+    <string-array name="list_of_commands">
+        <item >UP,</item>
+        <item >DOWN,</item>
+        <item >LEFT,</item>
+        <item >RIGHT,</item>
+        <item >move(</item>
+        <item >heal(</item>
+        <item >defend();</item>
+        <item >attack(</item>
+        <item >if(</item>
+        <item >while(</item>
+        <item >else</item>
+        <item >else if (</item>
+        <item >AP</item>
+        <item >HP</item>
+    </string-array>
+    <string name="menu_menu">Go to main menu</string>
+    <string name="menu_mission">Mission description</string>
+    <string name="menu_resume">Resume</string>
+    <string name="missionId">Mission description</string>    
 </resources>

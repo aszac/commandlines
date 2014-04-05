@@ -27,7 +27,7 @@ public abstract class GameThread extends Thread {
 	private Handler mHandler;
 	private Context mContext;
 
-	public GameThread(GameView gameView, Activity activity) {
+	public GameThread(GameView gameView, Activity activity, int selected_level) {
 		mSurfaceHolder = gameView.getHolder();
 		mContext = gameView.getContext();
 		mGameView = gameView;

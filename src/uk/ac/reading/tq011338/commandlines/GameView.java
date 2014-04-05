@@ -65,7 +65,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 			else {
 				if(thread.getState() == Thread.State.TERMINATED){
-					thread = new TheGame(this, null); 
+					thread = new TheGame(this, null, 0); 
 					thread.setRunning(true);
 					thread.start();
 				}

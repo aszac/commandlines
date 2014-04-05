@@ -1,5 +1,7 @@
 package uk.ac.reading.tq011338.commandlines;
 
+import org.json.JSONObject;
+
 import uk.ac.reading.tq011338.commandlines.ActionFigure.State;
 
 public class Obstacle implements WorldObject{
@@ -49,6 +51,12 @@ public class Obstacle implements WorldObject{
 	public void decideOnNextMove() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public JSONObject toJSON() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
