@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,9 +29,9 @@ public class CommandLinesJSONSerializer {
 		mFilename = f;
 	}
 	
-	public void saveWorldObjects(ArrayList<WorldObject> worldObject) throws JSONException, IOException {
+	public void saveWorldObjects(List<WorldObject> objectList) throws JSONException, IOException {
 		JSONArray array = new JSONArray();
-		for (WorldObject w : worldObject) {
+		for (WorldObject w : objectList) {
 			array.put(w.toJSON());
 			Writer writer = null;
 			try {

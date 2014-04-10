@@ -9,6 +9,7 @@ public class EnemyActionFigure extends ActionFigure {
 
 	public EnemyActionFigure(int x, int y, TheGame mGameThread) {
 		super(x, y, mGameThread);
+		hitPoints = 100;
 	}
 
 	public void decideOnNextMove() {

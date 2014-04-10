@@ -1,5 +1,7 @@
 package uk.ac.reading.tq011338.commandlines;
 
+import java.util.ArrayList;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -40,20 +42,24 @@ public class CommandLines extends Activity {
 	private static final int MENU_RESUME = 1;
 	private static final int MENU_MISSION = 2;
 	private static final int MENU_MENU = 3;
-	
+
 	private static final String FILENAME = "resume_game.json";
+
 	private static final String TAG = "WorldObjects";
 	private CommandLinesJSONSerializer mSerializer;
-	
+
 	private String mMissionDescription = "mission_desc";
+	private int selected_level;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_command); // inflate the layout
-		
-		int selected_level = getIntent().getExtras().getInt("selected_level");
+
+		selected_level = getIntent().getExtras().getInt("selected_level");
+		loadLevelFile();
 
 		mView = (GameView) findViewById(R.id.gameArea); // get the GameView
+
 		mGameThread = new TheGame(mView, this, selected_level);
 		mView.setThread(mGameThread);
 		mView.setStatusView((TextView) findViewById(R.id.text));
@@ -149,6 +155,7 @@ public class CommandLines extends Activity {
 
 	protected void onPause() {
 		super.onPause();
+		saveWorldObjects();
 	}
 
 	private void showDescriptionDialog(int messageId, int message,
@@ -205,17 +212,31 @@ public class CommandLines extends Activity {
 
 		return false;
 	}
-	
+
 	public boolean saveWorldObjects() {
 		try {
-			//TODO FIXXXXXXXXXXXXXXXXXXXX
-//			mSerializer.saveWorldObjects(TheGame.figureList);
+			mSerializer = new CommandLinesJSONSerializer(mView.getContext(),
+					FILENAME);
+			mSerializer.saveWorldObjects(mGameThread.objectList);
 			Log.d(TAG, "World objects saved to a file");
 			return true;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			Log.e(TAG, "Error saving world objects: ", e);
 			return false;
 		}
 	}
+
+	public ArrayList<WorldObject> loadLevelFile() {
+		ArrayList<WorldObject> worldObjects = null;
+		try {
+			mSerializer = new CommandLinesJSONSerializer(mView.getContext(),
+					"level_" + selected_level);
+			worldObjects = mSerializer.loadWordObjects();
+			Log.d(TAG, "World objects loaded from a file");
+		} catch (Exception e) {
+			Log.e(TAG, "Error loading world objects: ", e);
+		}
+		return worldObjects;
+	}
+
 }

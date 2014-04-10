@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 
 public class TheGame extends GameThread {
@@ -92,23 +93,54 @@ public class TheGame extends GameThread {
 		worldMap = new WorldObject[mapSizeX][mapSizeY];
 		objectList = new ArrayList<WorldObject>();
 		figureListForTurns = new ArrayList<ActionFigure>();
-		// TODO
+		
 		ActionFigure figure1 = new ActionFigure(6, 6, this);
 		objectList.add(figure1);
 		worldMap[6][6] = figure1;
-
-		EnemyActionFigure figure2 = new EnemyActionFigure(0, 1, this);
+		
+		ActionFigure figure2 = new ActionFigure(5, 5, this);
 		objectList.add(figure2);
-		worldMap[0][1] = figure2;
+		worldMap[5][5] = figure2;
+		
+		ActionFigure figure7 = new ActionFigure(4, 4, this);
+		objectList.add(figure7);
+		worldMap[4][4] = figure7;
 
-		Obstacle obstacle1 = new Obstacle(4, 2);
-		worldMap[4][2] = obstacle1;
+		EnemyActionFigure figure3 = new EnemyActionFigure(0, 0, this);
+		objectList.add(figure3);
+		worldMap[2][2] = figure3;
+		
+		EnemyActionFigure figure4 = new EnemyActionFigure(1, 1, this);
+		objectList.add(figure4);
+		worldMap[1][1] = figure4;
+		
+		EnemyActionFigure figure5 = new EnemyActionFigure(3, 4, this);
+		objectList.add(figure5);
+		worldMap[3][4] = figure5;
+		
+		EnemyActionFigure figure6 = new EnemyActionFigure(5, 1, this);
+		objectList.add(figure6);
+		worldMap[5][1] = figure6;
+
+		Obstacle obstacle1 = new Obstacle(3, 2);
+		worldMap[3][2] = obstacle1;
 		objectList.add(obstacle1);
 
 		Obstacle obstacle2 = new Obstacle(6, 0);
 		worldMap[6][0] = obstacle2;
 		objectList.add(obstacle2);
-
+		
+		Obstacle obstacle3 = new Obstacle(5, 0);
+		worldMap[5][0] = obstacle3;
+		objectList.add(obstacle3);
+		
+		Obstacle obstacle4 = new Obstacle(3, 6);
+		worldMap[3][6] = obstacle4;
+		objectList.add(obstacle4);
+		
+		Obstacle obstacle5 = new Obstacle(3, 7);
+		worldMap[3][7] = obstacle5;
+		objectList.add(obstacle5);
 	}
 
 	public void checkTurn() {
@@ -212,7 +244,6 @@ public class TheGame extends GameThread {
 	private void setGridSize(GameView gameView) {
 		int density = gameView.getResources().getDisplayMetrics().densityDpi;
 		int width = gameView.getResources().getDisplayMetrics().widthPixels;
-		int height = gameView.getResources().getDisplayMetrics().heightPixels;
 
 		// support for tablet graphics
 		if (width >= 800 && density == DisplayMetrics.DENSITY_HIGH) {
@@ -265,6 +296,17 @@ public class TheGame extends GameThread {
 		}
 		if (numberOfEnemyFigures == 0) {
 			this.setRunning(false);
+			String PREF_ENABLED_LEVEL = "enabled_level";
+			String enabled_level = PreferenceManager
+					.getDefaultSharedPreferences(activity).getString(
+							PREF_ENABLED_LEVEL, null);
+			if (Integer.parseInt(enabled_level) == selected_level) {
+				PreferenceManager
+						.getDefaultSharedPreferences(activity)
+						.edit()
+						.putString(PREF_ENABLED_LEVEL,
+								Integer.toString(selected_level + 1)).commit();
+			}
 			showGameOverDialog(R.string.mode_win);
 			return true;
 		}

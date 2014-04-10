@@ -8,10 +8,10 @@ public class ActionFigure implements WorldObject {
 	protected int x; // x coordinate
 	protected int y; // y coordinate
 
-	protected int hitPoints;
 	protected int AP;
 	protected State state;
 	protected GameThread mGameThread;
+	int hitPoints;
 
 	/**
 	 * Used for direction of motion for an action figure
@@ -38,7 +38,7 @@ public class ActionFigure implements WorldObject {
 		this.x = x;
 		this.y = y;
 		this.mGameThread = mGameThread;
-		hitPoints = 100;
+		hitPoints = 70;
 		this.state = State.MOVE;
 		AP = 100;
 	}

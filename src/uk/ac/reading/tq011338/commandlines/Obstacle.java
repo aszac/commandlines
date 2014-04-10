@@ -6,12 +6,7 @@ import uk.ac.reading.tq011338.commandlines.ActionFigure.State;
 
 public class Obstacle implements WorldObject{
 
-	private int x; // x coordinate
-	private int y; // y coordinate
-	
-	public Obstacle (int x, int y) {
-		this.x = x;
-		this.y = y;		
+	public Obstacle (int x, int y) {		
 	}
 	
 	public boolean isSelected() {
