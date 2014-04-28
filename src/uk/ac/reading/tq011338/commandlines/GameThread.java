@@ -40,7 +40,7 @@ public abstract class GameThread extends Thread {
 				canvasRun = mSurfaceHolder.lockCanvas(null);
 				synchronized (mSurfaceHolder) {
 					drawWorld(canvasRun);
-						checkTurn();
+					checkTurn();
 				}
 			} finally {
 				if (canvasRun != null) {

@@ -7,8 +7,8 @@ public class EnemyActionFigure extends ActionFigure {
 
 	private ActionFigure targetEnemy = null;
 
-	public EnemyActionFigure(int x, int y, TheGame mGameThread) {
-		super(x, y, mGameThread);
+	public EnemyActionFigure(int x, int y, int hp, GameThread mGameThread) {
+		super(x, y, hp, mGameThread);
 		hitPoints = 100;
 	}
 

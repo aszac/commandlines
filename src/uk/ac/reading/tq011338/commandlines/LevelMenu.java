@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 
 public class LevelMenu extends Activity {
 
-	private final int numberOfLevels = 5;
+	private final int numberOfLevels = 6;
 	public static final String PREF_ENABLED_LEVEL = "enabled_level";
 
 	protected void onCreate(Bundle savedInstanceState) {

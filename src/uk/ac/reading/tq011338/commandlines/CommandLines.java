@@ -1,12 +1,11 @@
 package uk.ac.reading.tq011338.commandlines;
 
-import java.util.ArrayList;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
-
+import org.json.JSONArray;
+import org.json.JSONException;
 import uk.ac.reading.tq011338.parser.CommandLinesLexer;
 import uk.ac.reading.tq011338.parser.CommandLinesParser;
 import uk.ac.reading.tq011338.parser.ExtendedCommandLinesBaseVisitor;
@@ -55,12 +54,17 @@ public class CommandLines extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_command); // inflate the layout
 
-		selected_level = getIntent().getExtras().getInt("selected_level");
-		loadLevelFile();
-
 		mView = (GameView) findViewById(R.id.gameArea); // get the GameView
 
-		mGameThread = new TheGame(mView, this, selected_level);
+		selected_level = getIntent().getExtras().getInt("selected_level");
+		JSONArray levelObjects = loadLevelFile();
+		mMissionDescription = setDescription();
+
+		try {
+			mGameThread = new TheSingleplayerGame(mView, this, selected_level, levelObjects);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		mView.setThread(mGameThread);
 		mView.setStatusView((TextView) findViewById(R.id.text));
 
@@ -142,6 +146,8 @@ public class CommandLines extends Activity {
 				showDescriptionDialog(R.string.moveId, R.string.moveText, "");
 			}
 		});
+		
+		showDescriptionDialog(R.string.missionId, 0, mMissionDescription);
 
 	}
 
@@ -156,6 +162,12 @@ public class CommandLines extends Activity {
 	protected void onPause() {
 		super.onPause();
 		saveWorldObjects();
+	}
+	
+	
+	protected void onResume() {
+		super.onResume();
+		loadLevelFile();
 	}
 
 	private void showDescriptionDialog(int messageId, int message,
@@ -226,17 +238,26 @@ public class CommandLines extends Activity {
 		}
 	}
 
-	public ArrayList<WorldObject> loadLevelFile() {
-		ArrayList<WorldObject> worldObjects = null;
+	public JSONArray loadLevelFile() {
+		JSONArray worldObjects = null;
 		try {
+			String filename = "level_" + selected_level + ".json";
 			mSerializer = new CommandLinesJSONSerializer(mView.getContext(),
-					"level_" + selected_level);
+					filename);
 			worldObjects = mSerializer.loadWordObjects();
 			Log.d(TAG, "World objects loaded from a file");
 		} catch (Exception e) {
 			Log.e(TAG, "Error loading world objects: ", e);
 		}
 		return worldObjects;
+	}
+
+	public String setDescription() {
+		String packageName = getPackageName();
+		int resId = getResources().getIdentifier(
+				"level_" + Integer.toString(selected_level), "string",
+				packageName);
+		return getString(resId);
 	}
 
 }

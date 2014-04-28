@@ -1,29 +1,20 @@
 package uk.ac.reading.tq011338.commandlines;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import uk.ac.reading.tq011338.commandlines.ActionFigure.State;
 
 public class Obstacle implements WorldObject{
+	
+	protected int x; // x coordinate
+	protected int y; // y coordinate
 
-	public Obstacle (int x, int y) {		
+	public Obstacle (int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
 	
-	public boolean isSelected() {
-		return false;
-	}
-
-	public void setSelected(boolean selected) {
-	}
-
-	public void setCommand(String command) {
-		
-	}
-
-	public String getCommand() {
-		return null;
-	}
-
 	@Override
 	public int getHitPoints() {
 		// TODO Auto-generated method stub
@@ -49,15 +40,19 @@ public class Obstacle implements WorldObject{
 	}
 
 	@Override
-	public JSONObject toJSON() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void setAP(int i) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public JSONObject toJSON() throws JSONException {
+		JSONObject json = new JSONObject();
+		json.put(JSON_TYPE, this.getClass().getName());
+		json.put(JSON_HP, hitPoints);
+		json.put(JSON_X, x);
+		json.put(JSON_Y, y);
+		
+		return json;
 	}
 
 }

@@ -2,21 +2,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-	android:gravity="center"    
+    android:gravity="center"
     android:orientation="vertical" >
 
-     <ImageView
+    <ImageView
         android:id="@+id/logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20sp"
-        android:src="@drawable/face" />   
-    
+        android:src="@drawable/face"
+        android:contentDescription="@string/logo"
+         />
+
+    <!-- sign-in button -->
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:textSize="20sp" />
+
+    <!-- sign-out button -->
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/SIGN_OUT"
+        android:visibility="gone"
+        android:textSize="20sp" />
+
     <Button
         android:id="@+id/startButton"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="@string/start"
+        android:textSize="20sp" />
+    
+        <Button
+        android:id="@+id/multiplayerButton"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/multiplayer"
         android:textSize="20sp" />
 
     <Button

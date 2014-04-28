@@ -3,6 +3,8 @@ package uk.ac.reading.tq011338.commandlines;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class ActionFigure implements WorldObject {
 	
 	protected int x; // x coordinate
@@ -34,16 +36,16 @@ public class ActionFigure implements WorldObject {
 	 * @param y
 	 *            - initial y location on the screen
 	 */
-	public ActionFigure(int x, int y, TheGame mGameThread) {
+	public ActionFigure(int x, int y, int hp, GameThread mGameThread2) {
 		this.x = x;
 		this.y = y;
-		this.mGameThread = mGameThread;
-		hitPoints = 70;
+		this.mGameThread = mGameThread2;
+		hitPoints = hp;
 		this.state = State.MOVE;
 		AP = 100;
 	}
 	
-	public ActionFigure(JSONObject json, TheGame mGameThread) throws JSONException {
+	public ActionFigure(JSONObject json, GameThread mGameThread) throws JSONException {
 		this.mGameThread = mGameThread;
 		x = json.getInt(JSON_X);
 		y = json.getInt(JSON_Y);
@@ -110,9 +112,9 @@ public class ActionFigure implements WorldObject {
 		case UP:
 			return y - 1 < 0;
 		case DOWN:
-			return y + 1 >= TheGame.mapSizeY;
+			return y + 1 >= TheSingleplayerGame.mapSizeY;
 		case RIGHT:
-			return x + 1 >= TheGame.mapSizeX;
+			return x + 1 >= TheSingleplayerGame.mapSizeX;
 		case LEFT:
 			return x - 1 < 0;
 		default:
@@ -293,10 +295,12 @@ public class ActionFigure implements WorldObject {
 	
 	public JSONObject toJSON() throws JSONException {
 		JSONObject json = new JSONObject();
-		json.put(JSON_TYPE, this.getClass().getName());
-		json.put(JSON_HP, hitPoints);
 		json.put(JSON_X, x);
 		json.put(JSON_Y, y);
+		json.put(JSON_TYPE, this.getClass().getName());
+		json.put(JSON_HP, hitPoints);
+		
+		Log.d("f", json.toString());
 		
 		return json;
 	}

@@ -43,5 +43,14 @@
     <string name="menu_menu">Go to main menu</string>
     <string name="menu_mission">Mission description</string>
     <string name="menu_resume">Resume</string>
-    <string name="missionId">Mission description</string>    
+    <string name="missionId">Mission description</string>
+    <string name="level_1">Welcome to the first mission! MOVE towards the enemy and ATTACK to eliminate the opponent.</string>
+    <string name="level_2">The enemy army is much stonger this time. Make sure you make the most out of your turn. If you are DEFENDing the enemy will cause you less harm.</string>
+    <string name="level_3">Another encounter! Try HEALing your soldiers to balance out their strengths against their enemy. </string>
+    <string name="level_4">IF you have enough hit points or action points perform the next move.</string>
+    <string name="level_5">Repeat the action WHILE you have enough hit points or action points. </string>
+    <string name="app_id">780169065509</string>
+    <string name="logo">logo</string>
+    <string name="SIGN_OUT">SIGN OUT</string>
+    <string name="multiplayer">MULTIPLAYER</string>    
 </resources>

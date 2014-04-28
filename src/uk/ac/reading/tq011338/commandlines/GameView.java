@@ -1,5 +1,7 @@
 package uk.ac.reading.tq011338.commandlines;
 
+import org.json.JSONException;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
@@ -55,7 +57,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 			}
 			else {
 				if(thread.getState() == Thread.State.TERMINATED){
-					thread = new TheGame(this, null, 0); 
+					try {
+						thread = new TheSingleplayerGame(this, null, 0, null);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					} 
 					thread.setRunning(true);
 					thread.start();
 				}

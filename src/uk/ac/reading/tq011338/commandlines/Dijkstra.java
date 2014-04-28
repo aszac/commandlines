@@ -155,8 +155,8 @@ public class Dijkstra {
 	public void initializeAllVertices() {
 		vertices = new ArrayList<Vertex>();
 
-		for (int i = 0; i < TheGame.mapSizeX; i++) {
-			for (int j = 0; j < TheGame.mapSizeY; j++) {
+		for (int i = 0; i < TheSingleplayerGame.mapSizeX; i++) {
+			for (int j = 0; j < TheSingleplayerGame.mapSizeY; j++) {
 				Vertex currentVertex = new Vertex(i, j);
 				currentVertex.adjacencies = new ArrayList<Edge>();
 				vertices.add(currentVertex);

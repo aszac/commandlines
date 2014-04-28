@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -46,9 +45,9 @@ public class CommandLinesJSONSerializer {
 		}
 	}
 	
-	public ArrayList<WorldObject> loadWordObjects() throws IOException, JSONException {
-		ArrayList<WorldObject> worldObjects = new ArrayList<WorldObject>();
+	public JSONArray loadWordObjects() throws IOException, JSONException {
 		BufferedReader reader = null;
+		JSONArray array = null;
 		try {
 			InputStream in = mContext.openFileInput(mFilename);
 			reader = new BufferedReader(new InputStreamReader(in));
@@ -58,14 +57,7 @@ public class CommandLinesJSONSerializer {
 				jsonString.append(line);
 			}
 			
-			JSONArray array = (JSONArray) new JSONTokener(jsonString.toString()).nextValue();
-			for (int i = 0; i < array.length(); i++) {
-				
-				//TODO FIXXXXXXXXXXXXXXXXXXX
-				
-				WorldObject object = (WorldObject) array.getJSONObject(i);
-				worldObjects.add(object);
-			}				
+			array = (JSONArray) new JSONTokener(jsonString.toString()).nextValue();
 		}
 		catch (FileNotFoundException e) {
 			
@@ -76,7 +68,7 @@ public class CommandLinesJSONSerializer {
 			}
 		}
 		
-		return worldObjects;
+		return array;
 	}
 	
 	
