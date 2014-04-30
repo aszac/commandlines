@@ -14,24 +14,6 @@
         android:contentDescription="@string/logo"
          />
 
-    <!-- sign-in button -->
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:textSize="20sp" />
-
-    <!-- sign-out button -->
-
-    <Button
-        android:id="@+id/sign_out_button"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:text="@string/SIGN_OUT"
-        android:visibility="gone"
-        android:textSize="20sp" />
-
     <Button
         android:id="@+id/startButton"
         android:layout_width="250dp"

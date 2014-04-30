@@ -249,15 +249,15 @@ containing a value of this type.
         public static final int helpButton=0x7f050015;
         public static final int hybrid=0x7f050004;
         public static final int linear_level_layout=0x7f05000f;
-        public static final int logo=0x7f050010;
+        public static final int logo=0x7f050012;
         public static final int moveButton=0x7f05000a;
         public static final int multiplayerButton=0x7f050014;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int run_button=0x7f05000e;
         public static final int satellite=0x7f050002;
-        public static final int sign_in_button=0x7f050011;
-        public static final int sign_out_button=0x7f050012;
+        public static final int sign_in_button=0x7f050010;
+        public static final int sign_out_button=0x7f050011;
         public static final int startButton=0x7f050013;
         public static final int terrain=0x7f050003;
         public static final int text=0x7f050006;
@@ -267,8 +267,9 @@ containing a value of this type.
     }
     public static final class layout {
         public static final int activity_command=0x7f030000;
-        public static final int level_menu=0x7f030001;
-        public static final int menu=0x7f030002;
+        public static final int commandlines_menu=0x7f030001;
+        public static final int level_menu=0x7f030002;
+        public static final int menu=0x7f030003;
     }
     public static final class menu {
         public static final int command=0x7f0b0000;

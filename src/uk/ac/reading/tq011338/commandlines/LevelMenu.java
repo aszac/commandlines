@@ -22,6 +22,9 @@ public class LevelMenu extends Activity {
 		int width = (int) TypedValue.applyDimension(
 				TypedValue.COMPLEX_UNIT_DIP, 250, getResources()
 						.getDisplayMetrics());
+		
+		String[] fileList = fileList();
+
 
 		for (int i = 0; i <= numberOfLevels; i++) {
 			Button button = new Button(this);
