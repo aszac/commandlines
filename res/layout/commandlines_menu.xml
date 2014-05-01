@@ -6,8 +6,8 @@
     android:background="#000000"
     android:gravity="center"
     android:orientation="vertical" >
-    
-        <!-- sign-in button -->
+
+    <!-- sign-in button -->
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
@@ -22,7 +22,21 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="@string/SIGN_OUT"
-        android:visibility="gone"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/startGameButton"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/start"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/mainMenuButton"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="@string/main_menu"
         android:textSize="20sp" />
 
 </LinearLayout>

@@ -52,5 +52,6 @@
     <string name="app_id">780169065509</string>
     <string name="logo">logo</string>
     <string name="SIGN_OUT">SIGN OUT</string>
-    <string name="multiplayer">MULTIPLAYER</string>    
+    <string name="multiplayer">MULTIPLAYER</string>
+    <string name="main_menu">MAIN MENU</string>    
 </resources>

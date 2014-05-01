@@ -62,6 +62,8 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 	private int selected_level;
 
 	Button signOutButton;
+	Button playGameButton;
+	Button mainMenuButton;
 	final static int RC_SELECT_PLAYERS = 10000;
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +75,31 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 		signOutButton = (Button) findViewById(R.id.sign_out_button);
 		signOutButton.setOnClickListener(this);
 
-		Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(
-				getApiClient(), 1, 1, true);
-		startActivityForResult(intent, RC_SELECT_PLAYERS);
+		playGameButton = (Button) findViewById(R.id.startGameButton);
+		
+		if (signOutButton.isShown()) {
+			playGameButton.setEnabled(true);
+		} else {
+			playGameButton.setEnabled(false);
 
-		findViewById(R.id.sign_in_button).setOnClickListener(this);
+		}
+		playGameButton.setOnClickListener(new View.OnClickListener() {
 
-		showDescriptionDialog(R.string.missionId, 0, mMissionDescription);
+			public void onClick(View v) {
+				Intent intent = Games.TurnBasedMultiplayer
+						.getSelectOpponentsIntent(getApiClient(), 1, 1, true);
+				startActivityForResult(intent, RC_SELECT_PLAYERS);
+
+				findViewById(R.id.sign_in_button).setOnClickListener(this);
+			}
+		});
+		
+		mainMenuButton = (Button) findViewById(R.id.mainMenuButton);
+		mainMenuButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				finish();
+			}
+		});
 
 	}
 
@@ -352,6 +372,9 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 				showDescriptionDialog(R.string.moveId, R.string.moveText, "");
 			}
 		});
+
+		showDescriptionDialog(R.string.missionId, 0, mMissionDescription);
+
 	}
 
 }
