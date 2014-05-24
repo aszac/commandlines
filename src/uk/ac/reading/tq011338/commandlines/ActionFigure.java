@@ -5,22 +5,18 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-public class ActionFigure implements WorldObject {
-	
-	protected int x; // x coordinate
-	protected int y; // y coordinate
+public class ActionFigure extends WorldObject {
 
 	protected int AP;
-	protected State state;
 	protected GameThread mGameThread;
-	int hitPoints;
+	
+	protected boolean isPlayer1 = true;
 
 	/**
 	 * Used for direction of motion for an action figure
 	 * 
 	 */
 	public enum Direction { // movement direction
-		// TODO change to private
 		UP, DOWN, RIGHT, LEFT
 	}
 
@@ -45,11 +41,9 @@ public class ActionFigure implements WorldObject {
 		AP = 100;
 	}
 	
-	public ActionFigure(JSONObject json, GameThread mGameThread) throws JSONException {
-		this.mGameThread = mGameThread;
-		x = json.getInt(JSON_X);
-		y = json.getInt(JSON_Y);
-		hitPoints = json.getInt(JSON_HP);
+	public ActionFigure(int x, int y, int hp, GameThread mGameThread2, boolean isPlayer1) {
+		this(x, y, hp, mGameThread2);
+		this.isPlayer1 = isPlayer1;
 	}
 
 	/**
@@ -145,6 +139,15 @@ public class ActionFigure implements WorldObject {
 
 	}
 
+	/**
+	 * Check if enemy present in the field
+	 * 
+	 * @param x
+	 *            - enemy position x
+	 * @param y
+	 *            - enemy position y
+	 * @return enemy in grid - yes / no
+	 */
 	public boolean checkIfEnemyInGrid(int x, int y) {
 		if (mGameThread.worldMap[x][y] instanceof ActionFigure) {
 			return true;
@@ -153,6 +156,12 @@ public class ActionFigure implements WorldObject {
 		}
 	}
 
+	/**
+	 * Perform attack action
+	 * 
+	 * @param direction
+	 * @param force
+	 */
 	public void attack(Direction direction, int force) {
 		state = State.ATTACK;
 		AP = AP - (10 * force);
@@ -191,26 +200,43 @@ public class ActionFigure implements WorldObject {
 
 	}
 
+	/**
+	 * Perform defend action
+	 */
 	public void defend() {
-		// TODO if enough action points defend
-		AP = 10;
-		state = State.DEFEND;
-	}
-
-	public void heal(int times) {
-		state = State.HEAL;
-		AP = AP - (10 * times);
-		// TODO if enough action points
-		if (hitPoints < 100) {
-			hitPoints = hitPoints + times * 10;
+		if (AP > 10) {
+			state = State.DEFEND;
 		}
 	}
 
+	/**
+	 * Perform heal action
+	 * 
+	 * @param times
+	 */
+	public void heal(int times) {
+		if (AP > 10) {
+			state = State.HEAL;
+			AP = AP - (10 * times);
+			// increase figures hitpoints
+			if (hitPoints < 100) {
+				hitPoints = hitPoints + times * 10;
+			}
+		}
+	}
+
+	/**
+	 * Check if enemy killed
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	public void checkIfKilled(int x, int y) {
+		// if killed - remove from the map
 		if (mGameThread.worldMap[x][y].getHitPoints() <= 0) {
 			mGameThread.objectList.remove(mGameThread.worldMap[x][y]);
 			try {
-				mGameThread.figureListForTurns.remove(mGameThread.worldMap[x][y]);
+				mGameThread.removeFigure(x, y);
 			} catch (Exception exception) {
 
 			}
@@ -270,7 +296,7 @@ public class ActionFigure implements WorldObject {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	/**
 	 * Updates position of the object in the array and the position fields in
 	 * the object.
@@ -292,16 +318,23 @@ public class ActionFigure implements WorldObject {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Serialize object to json
+	 */
 	public JSONObject toJSON() throws JSONException {
 		JSONObject json = new JSONObject();
 		json.put(JSON_X, x);
 		json.put(JSON_Y, y);
 		json.put(JSON_TYPE, this.getClass().getName());
 		json.put(JSON_HP, hitPoints);
-		
+
 		Log.d("f", json.toString());
-		
+
 		return json;
+	}
+	
+	public boolean isPlayer1() {
+		return isPlayer1;
 	}
 }

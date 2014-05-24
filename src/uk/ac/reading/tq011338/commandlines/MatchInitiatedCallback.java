@@ -7,6 +7,12 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 
 public class MatchInitiatedCallback implements ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>{
 
+	CommandLinesMultiplayer activity = null;
+	
+	public MatchInitiatedCallback(CommandLinesMultiplayer activity) {
+		this.activity = activity;
+	}
+	
 	public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
         // Check if the status code is not success;
         if (result.getStatus().getStatusCode() != GamesStatusCodes.STATUS_OK) {
@@ -18,7 +24,7 @@ public class MatchInitiatedCallback implements ResultCallback<TurnBasedMultiplay
 
         // If this player is not the first player in this match, continue.
         if (match.getData() != null) {
-  //          showTurnUI(match);
+            showTurnUI(match);
             return;
         }
 
@@ -26,13 +32,15 @@ public class MatchInitiatedCallback implements ResultCallback<TurnBasedMultiplay
         initGame(match);
 
         // Let the player take the first turn
- //       showTurnUI(match);
-		
+        showTurnUI(match);
 	}
 	
-	private void initGame (TurnBasedMatch match) {
-	// TODO	
+	private void showTurnUI(TurnBasedMatch match) {
+		//TODO
+	}
 
+	private void initGame (TurnBasedMatch match) {
+		activity.setupGame();
 	}
 
 

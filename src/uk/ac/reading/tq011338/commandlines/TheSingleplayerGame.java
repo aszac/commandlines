@@ -1,6 +1,7 @@
 package uk.ac.reading.tq011338.commandlines;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,7 +16,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 public class TheSingleplayerGame extends GameThread {
 
@@ -43,6 +43,7 @@ public class TheSingleplayerGame extends GameThread {
 	private ActionFigure activeFigure;
 	private int selected_level;
 	private JSONArray levelObjects;
+	private List<ActionFigure> figureListForTurns;
 
 	/**
 	 * Constructor called from the activity call, passing the current activity
@@ -55,7 +56,7 @@ public class TheSingleplayerGame extends GameThread {
 	 */
 	public TheSingleplayerGame(final GameView gameView, Activity activity,
 			int selected_level, JSONArray levelObjects) throws JSONException {
-		super(gameView, activity, selected_level);
+		super(gameView, activity);
 		this.activity = activity;
 		this.gameView = gameView;
 		this.selected_level = selected_level;
@@ -98,15 +99,18 @@ public class TheSingleplayerGame extends GameThread {
 		createNewWorld();
 	}
 
+	/**
+	 * Reads a file with the data for the current level
+	 * 
+	 * @throws JSONException
+	 */
 	public void createNewWorld() throws JSONException {
 		worldMap = new WorldObject[mapSizeX][mapSizeY];
 		figureListForTurns = new ArrayList<ActionFigure>();
 		objectList = new ArrayList<WorldObject>();
-
+		
 		for (int i = 0; i < levelObjects.length(); i++) {
 			 JSONObject JSONobject = levelObjects.getJSONObject(i);
-				Log.d("l", JSONobject.toString());
-
 			 
 			 int hp = JSONobject.getInt("hp");
 			 int x = JSONobject.getInt("x");
@@ -131,9 +135,13 @@ public class TheSingleplayerGame extends GameThread {
 	
 	}
 
+	/**
+	 * Sets the turn and initiates action for enemy figures
+	 */
 	public void checkTurn() {
 		checkIfGameOver();
 
+		// on start of the new turn
 		if (figureListForTurns.size() == 0) {
 			for (WorldObject figure : objectList) {
 				if (figure instanceof ActionFigure) {
@@ -143,6 +151,7 @@ public class TheSingleplayerGame extends GameThread {
 			}
 		}
 
+		// perform actions for the current turn
 		setActiveFigure(figureListForTurns.get(0));
 		if (activeFigure instanceof EnemyActionFigure) {
 			if (activeFigure.AP > 0) {
@@ -263,7 +272,12 @@ public class TheSingleplayerGame extends GameThread {
 			break;
 		}
 	}
-
+	
+	/**
+	 * Verifies if the game has been completed
+	 * 
+	 * @return game over - true / false
+	 */
 	private boolean checkIfGameOver() {
 		int numberOfFigures = 0;
 		int numberOfEnemyFigures = 0;
@@ -311,6 +325,11 @@ public class TheSingleplayerGame extends GameThread {
 		return activeFigure;
 	}
 
+	/**
+	 * Displays a dialog with game won / lost message
+	 * 
+	 * @param messageId - game won / lost
+	 */
 	private void showGameOverDialog(int messageId) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(
 				gameView.getContext());
@@ -339,5 +358,9 @@ public class TheSingleplayerGame extends GameThread {
 			}
 		});
 
+	}
+
+	protected void removeFigure(int x, int y) {
+		figureListForTurns.remove(worldMap[x][y]);
 	}
 }

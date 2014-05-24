@@ -5,9 +5,9 @@ import org.json.JSONObject;
 
 import uk.ac.reading.tq011338.commandlines.ActionFigure.State;
 
-public interface WorldObject {
-	int x = 0;
-	int y = 0;
+public abstract class WorldObject {
+	int x;
+	int y;
 	int hitPoints = 100;
 	State state = State.MOVE;
 	
@@ -15,12 +15,13 @@ public interface WorldObject {
 	static final String JSON_HP = "hp";
 	static final String JSON_X = "x";
 	static final String JSON_Y = "y";
-
-	public int getHitPoints();
-	public void reduceHitPoints(int hitPoints);
-	public State getState();
-	public void decideOnNextMove();
 	
-	public JSONObject toJSON() throws JSONException;
-	public void setAP(int i);
+	public abstract int getHitPoints();
+	public abstract void reduceHitPoints(int hitPoints);
+	public abstract State getState();
+	public abstract void decideOnNextMove();
+	
+	public abstract JSONObject toJSON() throws JSONException;
+	public abstract void setAP(int i);
+	public abstract boolean isPlayer1();
 }

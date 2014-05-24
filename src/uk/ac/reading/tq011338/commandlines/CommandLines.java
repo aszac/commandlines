@@ -6,11 +6,13 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import uk.ac.reading.tq011338.parser.CommandLinesLexer;
 import uk.ac.reading.tq011338.parser.CommandLinesParser;
 import uk.ac.reading.tq011338.parser.ExtendedCommandLinesBaseVisitor;
 import uk.ac.reading.tq011338.serializer.CommandLinesJSONSerializer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +59,15 @@ public class CommandLines extends Activity {
 		mView = (GameView) findViewById(R.id.gameArea); // get the GameView
 
 		selected_level = getIntent().getExtras().getInt("selected_level");
+		if (selected_level != 0) {
+			PreferenceManager.getDefaultSharedPreferences(this).edit()
+			.putString("selected_level", String.valueOf(selected_level))
+			.commit();
+		}
+		else {
+			selected_level = checkSelectedLevel();
+		}
+		
 		JSONArray levelObjects = loadLevelFile();
 		mMissionDescription = setDescription();
 
@@ -170,6 +181,13 @@ public class CommandLines extends Activity {
 		loadLevelFile();
 	}
 
+	/**
+	 * Shows description dialog for the level and the action descriptions
+	 * 
+	 * @param messageId - type of message
+	 * @param message - dialog heading
+	 * @param message_txt - content of the message
+	 */
 	private void showDescriptionDialog(int messageId, int message,
 			String message_txt) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -198,6 +216,9 @@ public class CommandLines extends Activity {
 
 	}
 
+	/**
+	 * Creates an option menu
+	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
@@ -208,6 +229,9 @@ public class CommandLines extends Activity {
 		return true;
 	}
 
+	/**
+	 * Adds actions to each option menu item
+	 */
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_RESUME: {
@@ -225,6 +249,11 @@ public class CommandLines extends Activity {
 		return false;
 	}
 
+	/**
+	 * Serialize world objects into a json file
+	 * 
+	 * @return successful save
+	 */
 	public boolean saveWorldObjects() {
 		try {
 			mSerializer = new CommandLinesJSONSerializer(mView.getContext(),
@@ -238,6 +267,11 @@ public class CommandLines extends Activity {
 		}
 	}
 
+	/**
+	 * Load a current level file
+	 * 
+	 * @return array of world objects
+	 */
 	public JSONArray loadLevelFile() {
 		JSONArray worldObjects = null;
 		try {
@@ -252,12 +286,24 @@ public class CommandLines extends Activity {
 		return worldObjects;
 	}
 
+	/**
+	 * Set the description for the current level
+	 * 
+	 * @return current level description
+	 */
 	public String setDescription() {
 		String packageName = getPackageName();
 		int resId = getResources().getIdentifier(
 				"level_" + Integer.toString(selected_level), "string",
 				packageName);
 		return getString(resId);
+	}
+	
+	public int checkSelectedLevel() {
+		String selected_level = PreferenceManager.getDefaultSharedPreferences(
+				this).getString("selected_level", null);
+
+		return Integer.parseInt(selected_level);
 	}
 
 }

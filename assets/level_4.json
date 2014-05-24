@@ -1,0 +1,12 @@
+[{"type":"uk.ac.reading.tq011338.commandlines.ActionFigure","hp":50,"y":6,"x":6},
+{"type":"uk.ac.reading.tq011338.commandlines.ActionFigure","hp":50,"y":5,"x":5},
+{"type":"uk.ac.reading.tq011338.commandlines.ActionFigure","hp":70,"y":4,"x":4},
+{"type":"uk.ac.reading.tq011338.commandlines.EnemyActionFigure","hp":100,"y":2,"x":2},
+{"type":"uk.ac.reading.tq011338.commandlines.EnemyActionFigure","hp":100,"y":1,"x":1},
+{"type":"uk.ac.reading.tq011338.commandlines.EnemyActionFigure","hp":100,"y":4,"x":3},
+{"type":"uk.ac.reading.tq011338.commandlines.EnemyActionFigure","hp":100,"y":1,"x":5},
+{"type":"uk.ac.reading.tq011338.commandlines.Obstacle","y":2,"hp":100,"x":3},
+{"type":"uk.ac.reading.tq011338.commandlines.Obstacle","y":0,"hp":100,"x":6},
+{"type":"uk.ac.reading.tq011338.commandlines.Obstacle","y":0,"hp":100,"x":5},
+{"type":"uk.ac.reading.tq011338.commandlines.Obstacle","y":6,"hp":100,"x":3},
+{"type":"uk.ac.reading.tq011338.commandlines.Obstacle","y":7,"hp":100,"x":3}]

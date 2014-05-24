@@ -68,10 +68,11 @@ int drawable ic_plusone_medium_off_client 0x7f020022
 int drawable ic_plusone_small_off_client 0x7f020023
 int drawable ic_plusone_standard_off_client 0x7f020024
 int drawable ic_plusone_tall_off_client 0x7f020025
-int drawable selectedface 0x7f020026
-int drawable square_teal 0x7f020027
-int drawable stone 0x7f020028
-int drawable tree 0x7f020029
+int drawable selected_enemy 0x7f020026
+int drawable selectedface 0x7f020027
+int drawable square_teal 0x7f020028
+int drawable stone 0x7f020029
+int drawable tree 0x7f02002a
 int id action_settings 0x7f050019
 int id attackButton 0x7f050008
 int id clear_button 0x7f05000d
@@ -168,6 +169,7 @@ int string mode_lose 0x7f060026
 int string mode_win 0x7f060027
 int string moveId 0x7f060034
 int string moveText 0x7f060035
+int string multi_desc 0x7f060044
 int string multiplayer 0x7f060042
 int string ok 0x7f06002f
 int string restart_button 0x7f060028

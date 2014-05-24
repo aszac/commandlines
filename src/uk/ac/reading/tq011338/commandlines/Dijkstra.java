@@ -50,6 +50,11 @@ public class Dijkstra {
 		this.worldMap = worldMap;
 	}
 
+	/**
+	 * Computes possible paths to the target
+	 * 
+	 * @param source node
+	 */
 	public void computePaths(Vertex source) {
 		source.minDistance = 0.;
 		PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>();
@@ -74,6 +79,12 @@ public class Dijkstra {
 
 	}
 
+	/**
+	 * Selects the shortest path to the target
+	 * 
+	 * @param target
+	 * @return path
+	 */
 	public List<Vertex> getShortestPathTo(Vertex target) {
 		path = new ArrayList<Vertex>();
 		
@@ -97,6 +108,14 @@ public class Dijkstra {
 		return path;
 	}
 
+	/**
+	 * Set the nodes, adjacencies and compute the shortest path
+	 * 
+	 * @param sourceX
+	 * @param sourceY
+	 * @param goalX
+	 * @param goalY
+	 */
 	public void pathfinding(int sourceX, int sourceY, int goalX, int goalY) {
 		initializeAllVertices();
 		int goal = 0;
@@ -152,6 +171,9 @@ public class Dijkstra {
 		getShortestPathTo(vertices.get(goal));
 	}
 
+	/**
+	 * Initialize the graph nodes with the corresponding attributes
+	 */
 	public void initializeAllVertices() {
 		vertices = new ArrayList<Vertex>();
 

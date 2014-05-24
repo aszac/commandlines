@@ -23,9 +23,6 @@ public class LevelMenu extends Activity {
 				TypedValue.COMPLEX_UNIT_DIP, 250, getResources()
 						.getDisplayMetrics());
 		
-		String[] fileList = fileList();
-
-
 		for (int i = 0; i <= numberOfLevels; i++) {
 			Button button = new Button(this);
 			button.setLayoutParams(new LayoutParams(width,
@@ -66,6 +63,11 @@ public class LevelMenu extends Activity {
 		}
 	}
 
+	/**
+	 * OnClick start a new game, pass the selected level
+	 * 
+	 * @param button
+	 */
 	private void setSelectedLevelListener(Button button) {
 		button.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -77,6 +79,11 @@ public class LevelMenu extends Activity {
 		});		
 	}
 
+	/**
+	 * Check if resume file exists to enable the resume button
+	 * 
+	 * @return
+	 */
 	private boolean checkIfResumeFileExists() {
 		String[] fileList = fileList();
 
@@ -88,6 +95,11 @@ public class LevelMenu extends Activity {
 		return false;
 	}
 
+	/**
+	 * Find the highest enabled level
+	 * 
+	 * @return enabled level
+	 */
 	public String checkEnabledLevel() {
 		String enabled_level = PreferenceManager.getDefaultSharedPreferences(
 				this).getString(PREF_ENABLED_LEVEL, null);

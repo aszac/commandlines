@@ -12,6 +12,9 @@ public class EnemyActionFigure extends ActionFigure {
 		hitPoints = 100;
 	}
 
+	/**
+	 * AI decision for the next move
+	 */
 	public void decideOnNextMove() {
 		targetEnemy = findClosestEnemy();
 		Dijkstra dijkstra = new Dijkstra(mGameThread.worldMap);
@@ -40,6 +43,13 @@ public class EnemyActionFigure extends ActionFigure {
 		}
 	}
 
+	/**
+	 * Find the direction for the next move
+	 * 
+	 * @param moveX
+	 * @param moveY
+	 * @return
+	 */
 	private Direction getMoveDirection(int moveX, int moveY) {
 		if (moveY == this.getY()) {
 			if (moveX < this.getX()) {
@@ -57,6 +67,11 @@ public class EnemyActionFigure extends ActionFigure {
 		return null;
 	}
 
+	/**
+	 * Check if enemy located next to the current figure
+	 * 
+	 * @return 
+	 */
 	public boolean isDistanceToEnemyOne() {
 		double x = this.getX() - targetEnemy.getX();
 		double y = this.getY() - targetEnemy.getY();
@@ -68,6 +83,11 @@ public class EnemyActionFigure extends ActionFigure {
 
 	}
 
+	/**
+	 * Get a direction opposite to enemy direction
+	 * 
+	 * @return opposite direction
+	 */
 	public Direction getOppositeDirection() {
 		Direction enemyDirection = getDirectionOfEnemy();
 		switch (enemyDirection) {
@@ -83,6 +103,11 @@ public class EnemyActionFigure extends ActionFigure {
 		return null;
 	}
 
+	/**
+	 * Get direction of the enemy based on current position
+	 * 
+	 * @return direction of enemy
+	 */
 	public Direction getDirectionOfEnemy() {
 		if (targetEnemy.getY() > this.getY()) {
 			return Direction.UP;
@@ -100,7 +125,7 @@ public class EnemyActionFigure extends ActionFigure {
 	/**
 	 * Find the closest enemy to attack
 	 * 
-	 * @return
+	 * @return closest enemy
 	 */
 	private ActionFigure findClosestEnemy() {
 		List<ActionFigure> enemyList = new ArrayList<ActionFigure>();

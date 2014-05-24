@@ -17,12 +17,11 @@ public abstract class GameThread extends Thread {
 	
 	protected WorldObject[][] worldMap;
 	protected List<WorldObject> objectList;
-	public List<ActionFigure> figureListForTurns;
 
 	protected int mMode = 1;
 	protected boolean isButtonClicked = false;
 
-	public GameThread(GameView gameView, Activity activity, int selected_level) {
+	public GameThread(GameView gameView, Activity activity) {
 		mSurfaceHolder = gameView.getHolder();
 		gameView.getContext();
 		mGameView = gameView;
@@ -59,6 +58,7 @@ public abstract class GameThread extends Thread {
 
 	abstract protected void drawWorld(Canvas canvas);
 	abstract protected void checkTurn();
+	abstract protected void removeFigure(int x, int y);
 
 	public void cleanup() {
 		this.mGameView = null;

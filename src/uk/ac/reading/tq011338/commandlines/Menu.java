@@ -1,14 +1,5 @@
 package uk.ac.reading.tq011338.commandlines;
 
-import java.util.ArrayList;
-
-import com.google.android.gms.games.Games;
-import com.google.android.gms.games.multiplayer.Multiplayer;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
-import com.google.example.games.basegameutils.BaseGameActivity;
-import uk.ac.reading.tq011338.commandlines.MatchInitiatedCallback;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

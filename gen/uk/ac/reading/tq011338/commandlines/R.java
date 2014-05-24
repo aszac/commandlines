@@ -231,10 +231,11 @@ containing a value of this type.
         public static final int ic_plusone_small_off_client=0x7f020023;
         public static final int ic_plusone_standard_off_client=0x7f020024;
         public static final int ic_plusone_tall_off_client=0x7f020025;
-        public static final int selectedface=0x7f020026;
-        public static final int square_teal=0x7f020027;
-        public static final int stone=0x7f020028;
-        public static final int tree=0x7f020029;
+        public static final int selected_enemy=0x7f020026;
+        public static final int selectedface=0x7f020027;
+        public static final int square_teal=0x7f020028;
+        public static final int stone=0x7f020029;
+        public static final int tree=0x7f02002a;
     }
     public static final class id {
         public static final int action_settings=0x7f050019;
@@ -411,6 +412,7 @@ containing a value of this type.
         public static final int mode_win=0x7f060027;
         public static final int moveId=0x7f060034;
         public static final int moveText=0x7f060035;
+        public static final int multi_desc=0x7f060044;
         public static final int multiplayer=0x7f060042;
         public static final int ok=0x7f06002f;
         public static final int restart_button=0x7f060028;

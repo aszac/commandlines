@@ -5,11 +5,8 @@ import org.json.JSONObject;
 
 import uk.ac.reading.tq011338.commandlines.ActionFigure.State;
 
-public class Obstacle implements WorldObject{
+public class Obstacle extends WorldObject{
 	
-	protected int x; // x coordinate
-	protected int y; // y coordinate
-
 	public Obstacle (int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -53,6 +50,12 @@ public class Obstacle implements WorldObject{
 		json.put(JSON_Y, y);
 		
 		return json;
+	}
+
+	@Override
+	public boolean isPlayer1() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

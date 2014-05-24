@@ -53,13 +53,12 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 	private static final int MENU_MISSION = 2;
 	private static final int MENU_MENU = 3;
 
-	private static final String FILENAME = "resume_game.json";
+	private static final String FILENAME = "multiplayer.json";
 
 	private static final String TAG = "WorldObjects";
 	private CommandLinesJSONSerializer mSerializer;
 
 	private String mMissionDescription = "mission_desc";
-	private int selected_level;
 
 	Button signOutButton;
 	Button playGameButton;
@@ -70,19 +69,11 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.commandlines_menu);
 
-		mView = (GameView) findViewById(R.id.gameArea); // get the GameView
-
 		signOutButton = (Button) findViewById(R.id.sign_out_button);
 		signOutButton.setOnClickListener(this);
 
 		playGameButton = (Button) findViewById(R.id.startGameButton);
-		
-		if (signOutButton.isShown()) {
-			playGameButton.setEnabled(true);
-		} else {
-			playGameButton.setEnabled(false);
 
-		}
 		playGameButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
@@ -93,7 +84,7 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 				findViewById(R.id.sign_in_button).setOnClickListener(this);
 			}
 		});
-		
+
 		mainMenuButton = (Button) findViewById(R.id.mainMenuButton);
 		mainMenuButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -121,6 +112,16 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 		loadLevelFile();
 	}
 
+	/**
+	 * Shows description dialog for the level and the action descriptions
+	 * 
+	 * @param messageId
+	 *            - type of message
+	 * @param message
+	 *            - dialog heading
+	 * @param message_txt
+	 *            - content of the message
+	 */
 	private void showDescriptionDialog(int messageId, int message,
 			String message_txt) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -146,9 +147,11 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 				builder.show();
 			}
 		});
-
 	}
 
+	/**
+	 * Creates an option menu
+	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
@@ -159,6 +162,9 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 		return true;
 	}
 
+	/**
+	 * Adds actions to each option menu item
+	 */
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_RESUME: {
@@ -172,10 +178,14 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 			finish();
 			return true;
 		}
-
 		return false;
 	}
 
+	/**
+	 * Serialize world objects into a json file
+	 * 
+	 * @return successful save
+	 */
 	public boolean saveWorldObjects() {
 		try {
 			mSerializer = new CommandLinesJSONSerializer(mView.getContext(),
@@ -189,12 +199,16 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 		}
 	}
 
+	/**
+	 * Load a current level file
+	 * 
+	 * @return array of world objects
+	 */
 	public JSONArray loadLevelFile() {
 		JSONArray worldObjects = null;
 		try {
-			String filename = "level_" + selected_level + ".json";
 			mSerializer = new CommandLinesJSONSerializer(mView.getContext(),
-					filename);
+					FILENAME);
 			worldObjects = mSerializer.loadWordObjects();
 			Log.d(TAG, "World objects loaded from a file");
 		} catch (Exception e) {
@@ -203,10 +217,14 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 		return worldObjects;
 	}
 
+	/**
+	 * Set the description for the current level
+	 * 
+	 * @return current level description
+	 */
 	public String setDescription() {
 		String packageName = getPackageName();
-		int resId = getResources().getIdentifier(
-				"level_" + Integer.toString(selected_level), "string",
+		int resId = getResources().getIdentifier("multi_desc", "string",
 				packageName);
 		return getString(resId);
 	}
@@ -243,7 +261,7 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 
 			// kick the match off
 			Games.TurnBasedMultiplayer.createMatch(getApiClient(), tbmc)
-					.setResultCallback(new MatchInitiatedCallback());
+					.setResultCallback(new MatchInitiatedCallback(this));
 		}
 	}
 
@@ -253,12 +271,17 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 		findViewById(R.id.sign_out_button).setVisibility(View.GONE);
 	}
 
-	@Override
 	public void onSignInSucceeded() {
 		// show sign-out button, hide the sign-in button
 		findViewById(R.id.sign_in_button).setVisibility(View.GONE);
 		findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
 
+		if (signOutButton.isShown()) {
+			playGameButton.setEnabled(true);
+		} else {
+			playGameButton.setEnabled(false);
+
+		}
 		// (your code here: update UI, enable functionality that depends on sign
 		// in, etc)
 
@@ -279,15 +302,16 @@ public class CommandLinesMultiplayer extends BaseGameActivity implements
 
 	}
 
-	public void gameSettings() {
+	public void setupGame() {
 		setContentView(R.layout.activity_command); // inflate the layout
-		selected_level = getIntent().getExtras().getInt("selected_level");
+
+		mView = (GameView) findViewById(R.id.gameArea); // get the GameView
+
 		JSONArray levelObjects = loadLevelFile();
 		mMissionDescription = setDescription();
 
 		try {
-			mGameThread = new TheMultiplayerGame(mView, this, selected_level,
-					levelObjects);
+			mGameThread = new TheMultiplayerGame(mView, this, levelObjects);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

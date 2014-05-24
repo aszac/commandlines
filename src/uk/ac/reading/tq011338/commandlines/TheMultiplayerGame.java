@@ -1,6 +1,7 @@
 package uk.ac.reading.tq011338.commandlines;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,14 +14,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
-public class TheMultiplayerGame extends GameThread  {
+public class TheMultiplayerGame extends GameThread {
 
 	private Bitmap mFigure_player1;
 	private Bitmap mFigureSelected;
+	private Bitmap mFigure2Selected;
 	private Bitmap mGridTile;
 	private Bitmap mTree;
 
@@ -41,24 +41,26 @@ public class TheMultiplayerGame extends GameThread  {
 	private Activity activity;
 	private GameView gameView;
 	private ActionFigure activeFigure;
-	private int selected_level;
 	private JSONArray levelObjects;
+
+	private List<ActionFigure> figureListForPlayer1;
+	private List<ActionFigure> figureListForPlayer2;
+
+	private boolean isPlayer1Turn = true;
 
 	/**
 	 * Constructor called from the activity call, passing the current activity
 	 * 
 	 * @param gameView
 	 * @param activity
-	 * @param selected_level
 	 * @param levelObjects
-	 * @throws JSONException 
+	 * @throws JSONException
 	 */
 	public TheMultiplayerGame(final GameView gameView, Activity activity,
-			int selected_level, JSONArray levelObjects) throws JSONException {
-		super(gameView, activity, selected_level);
+			JSONArray levelObjects) throws JSONException {
+		super(gameView, activity);
 		this.activity = activity;
 		this.gameView = gameView;
-		this.selected_level = selected_level;
 		this.levelObjects = levelObjects;
 
 		setGridSize(gameView);
@@ -67,6 +69,9 @@ public class TheMultiplayerGame extends GameThread  {
 
 		mFigureSelected = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.selectedface);
+		
+		mFigure2Selected = BitmapFactory.decodeResource(gameView.getResources(),
+				R.drawable.selected_enemy);
 
 		mGridTile = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.square_teal);
@@ -74,8 +79,8 @@ public class TheMultiplayerGame extends GameThread  {
 		mTree = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.tree);
 
-		mRecovery_player1 = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.cross);
+		mRecovery_player1 = BitmapFactory.decodeResource(
+				gameView.getResources(), R.drawable.cross);
 
 		mAttack_player1 = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.angry);
@@ -86,8 +91,8 @@ public class TheMultiplayerGame extends GameThread  {
 		mFigure_player2 = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.face_enemy);
 
-		mRecovery_player2 = BitmapFactory.decodeResource(gameView.getResources(),
-				R.drawable.cross_enemy);
+		mRecovery_player2 = BitmapFactory.decodeResource(
+				gameView.getResources(), R.drawable.cross_enemy);
 
 		mAttack_player2 = BitmapFactory.decodeResource(gameView.getResources(),
 				R.drawable.angry_enemy);
@@ -98,65 +103,85 @@ public class TheMultiplayerGame extends GameThread  {
 		createNewWorld();
 	}
 
+	/**
+	 * Reads a file with the data for the current level
+	 * 
+	 * @throws JSONException
+	 */
 	public void createNewWorld() throws JSONException {
 		worldMap = new WorldObject[mapSizeX][mapSizeY];
-		figureListForTurns = new ArrayList<ActionFigure>();
+		figureListForPlayer1 = new ArrayList<ActionFigure>();
+		figureListForPlayer2 = new ArrayList<ActionFigure>();
 		objectList = new ArrayList<WorldObject>();
 
 		for (int i = 0; i < levelObjects.length(); i++) {
-			 JSONObject JSONobject = levelObjects.getJSONObject(i);
-				Log.d("l", JSONobject.toString());
+			JSONObject JSONobject = levelObjects.getJSONObject(i);
 
-			 
-			 int hp = JSONobject.getInt("hp");
-			 int x = JSONobject.getInt("x");
-			 int y = JSONobject.getInt("y");
-			 String type = JSONobject.getString("type");
-			 WorldObject object;
-			 
-			 if (type.contains("EnemyActionFigure")) {
-				object = new EnemyActionFigure(x, y, hp, this);
-				figureListForTurns.add((ActionFigure) object);
+			int hp = JSONobject.getInt("hp");
+			int x = JSONobject.getInt("x");
+			int y = JSONobject.getInt("y");
+			String type = JSONobject.getString("type");
+			WorldObject object;
+
+			if (type.contains("EnemyActionFigure")) {
+				object = new ActionFigure(x, y, hp, this, false);
+				figureListForPlayer2.add((ActionFigure) object);
+			} else if (type.contains("Obstacle")) {
+				object = new Obstacle(x, y);
+			} else {
+				object = new ActionFigure(x, y, hp, this, true);
+				figureListForPlayer1.add((ActionFigure) object);
 			}
-			 else if (type.contains("Obstacle")) {
-				 object = new Obstacle(x, y);
-			 }
-			 else {
-				 object = new ActionFigure(x, y, hp, this);
-				 figureListForTurns.add((ActionFigure) object);
-			 }
-			 objectList.add(object);
-			 worldMap[x][y] = object; 
+			objectList.add(object);
+			worldMap[x][y] = object;
 		}
-	
+
 	}
 
+	/**
+	 * Sets the turn and initiates action for enemy figures
+	 */
 	public void checkTurn() {
 		checkIfGameOver();
 
-		if (figureListForTurns.size() == 0) {
+		// on start of the new turn
+		if (figureListForPlayer1.size() == 0
+				&& figureListForPlayer2.size() == 0) {
+			// change the turn to player1
+			isPlayer1Turn = true;
+
 			for (WorldObject figure : objectList) {
 				if (figure instanceof ActionFigure) {
 					figure.setAP(100);
-					figureListForTurns.add((ActionFigure) figure);
+
+					if (!figure.isPlayer1()) {
+						figureListForPlayer2.add((ActionFigure) figure);
+					} else {
+						figureListForPlayer1.add((ActionFigure) figure);
+					}
 				}
 			}
 		}
 
-		setActiveFigure(figureListForTurns.get(0));
-		if (activeFigure instanceof EnemyActionFigure) {
-			if (activeFigure.AP > 0) {
-				activeFigure.decideOnNextMove();
-			} else {
-				figureListForTurns.remove(activeFigure);
+		// perform actions for the current turn
+		if (isPlayer1Turn) {
+			setActiveFigure(figureListForPlayer1.get(0));
+			if (isButtonClicked) {
+				figureListForPlayer1.remove(activeFigure);
+				isButtonClicked = false;
 			}
 		} else {
+			setActiveFigure(figureListForPlayer2.get(0));
 			if (isButtonClicked) {
-				figureListForTurns.remove(activeFigure);
+				figureListForPlayer2.remove(activeFigure);
 				isButtonClicked = false;
 			}
 		}
 
+		// change the turn to player2
+		if (figureListForPlayer1.size() == 0) {
+			isPlayer1Turn = false;
+		}
 	}
 
 	/**
@@ -171,7 +196,18 @@ public class TheMultiplayerGame extends GameThread  {
 		for (int i = 0; i < mapSizeX; i++) {
 			for (int j = 0; j < mapSizeY; j++) {
 				canvas.drawBitmap(mGridTile, i * mGridSize, j * mGridSize, null);
-				if (worldMap[i][j] instanceof EnemyActionFigure) {
+			}
+		}
+
+		for (WorldObject object : objectList) {
+			int i = object.x;
+			int j = object.y;
+			if (object instanceof Obstacle) {
+				canvas.drawBitmap(mTree, i * mGridSize, j * mGridSize, null);
+			} else if (!object.isPlayer1()) {
+				if (worldMap[i][j] != activeFigure) { // use different
+					// bitmap
+					// if not selected
 					switch (worldMap[i][j].getState()) {
 					case ATTACK:
 						canvas.drawBitmap(mAttack_player2, i * mGridSize, j
@@ -189,39 +225,39 @@ public class TheMultiplayerGame extends GameThread  {
 						canvas.drawBitmap(mFigure_player2, i * mGridSize, j
 								* mGridSize, null);
 					}
-				} else if (worldMap[i][j] instanceof ActionFigure) {
+				} else {
+					canvas.drawBitmap(mFigure2Selected, i * mGridSize, j
+							* mGridSize, null);
+				}
 
-					if (worldMap[i][j] != activeFigure) { // use different
-															// bitmap
-						// if not selected
-						switch (worldMap[i][j].getState()) {
-						case ATTACK:
-							canvas.drawBitmap(mAttack_player1, i * mGridSize, j
-									* mGridSize, null);
-							break;
-						case HEAL:
-							canvas.drawBitmap(mRecovery_player1, i * mGridSize, j
-									* mGridSize, null);
-							break;
-						case DEFEND:
-							canvas.drawBitmap(mDefend_player1, i * mGridSize, j
-									* mGridSize, null);
-							break;
-						default:
-							canvas.drawBitmap(mFigure_player1, i * mGridSize, j
-									* mGridSize, null);
-						}
-
-					} else {
-						canvas.drawBitmap(mFigureSelected, i * mGridSize, j
+			} else if (object.isPlayer1()) {
+				if (worldMap[i][j] != activeFigure) { // use different
+														// bitmap
+					// if not selected
+					switch (worldMap[i][j].getState()) {
+					case ATTACK:
+						canvas.drawBitmap(mAttack_player1, i * mGridSize, j
+								* mGridSize, null);
+						break;
+					case HEAL:
+						canvas.drawBitmap(mRecovery_player1, i * mGridSize, j
+								* mGridSize, null);
+						break;
+					case DEFEND:
+						canvas.drawBitmap(mDefend_player1, i * mGridSize, j
+								* mGridSize, null);
+						break;
+					default:
+						canvas.drawBitmap(mFigure_player1, i * mGridSize, j
 								* mGridSize, null);
 					}
-				} else if (worldMap[i][j] instanceof Obstacle) {
-					canvas.drawBitmap(mTree, i * mGridSize, j * mGridSize, null);
+
+				} else {
+					canvas.drawBitmap(mFigureSelected, i * mGridSize, j
+							* mGridSize, null);
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -264,37 +300,34 @@ public class TheMultiplayerGame extends GameThread  {
 		}
 	}
 
+	/**
+	 * Verifies if the game has been completed
+	 * 
+	 * @return game over - true / false
+	 */
 	private boolean checkIfGameOver() {
-		int numberOfFigures = 0;
-		int numberOfEnemyFigures = 0;
+		int numberOfPlayer1Figures = 0;
+		int numberOfPlayer2Figures = 0;
 		for (WorldObject object : objectList) {
 			if (object instanceof ActionFigure) {
-				if (object instanceof EnemyActionFigure) {
-					numberOfEnemyFigures++;
+				if (object.isPlayer1()) {
+					numberOfPlayer1Figures++;
 				} else {
-					numberOfFigures++;
+					numberOfPlayer2Figures++;
 				}
 			}
 		}
 
-		if (numberOfFigures == 0) {
+		// check if any player 1 figures exist
+		if (numberOfPlayer1Figures == 0) {
 			this.setRunning(false);
 			showGameOverDialog(R.string.mode_lose);
 			return true;
 		}
-		if (numberOfEnemyFigures == 0) {
+
+		// check if any player 2 figures exist
+		if (numberOfPlayer2Figures == 0) {
 			this.setRunning(false);
-			String PREF_ENABLED_LEVEL = "enabled_level";
-			String enabled_level = PreferenceManager
-					.getDefaultSharedPreferences(activity).getString(
-							PREF_ENABLED_LEVEL, null);
-			if (Integer.parseInt(enabled_level) == selected_level) {
-				PreferenceManager
-						.getDefaultSharedPreferences(activity)
-						.edit()
-						.putString(PREF_ENABLED_LEVEL,
-								Integer.toString(selected_level + 1)).commit();
-			}
 			showGameOverDialog(R.string.mode_win);
 			return true;
 		}
@@ -311,6 +344,12 @@ public class TheMultiplayerGame extends GameThread  {
 		return activeFigure;
 	}
 
+	/**
+	 * Displays a dialog with game won / lost message
+	 * 
+	 * @param messageId
+	 *            - game won / lost
+	 */
 	private void showGameOverDialog(int messageId) {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(
 				gameView.getContext());
@@ -338,6 +377,18 @@ public class TheMultiplayerGame extends GameThread  {
 				builder.show();
 			}
 		});
+
+	}
+
+	/**
+	 * Remove killed figure
+	 */
+	protected void removeFigure(int x, int y) {
+		if (isPlayer1Turn) {
+			figureListForPlayer2.remove(worldMap[x][y]);
+		} else {
+			figureListForPlayer1.remove(worldMap[x][y]);
+		}
 
 	}
 }

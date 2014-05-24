@@ -53,5 +53,6 @@
     <string name="logo">logo</string>
     <string name="SIGN_OUT">SIGN OUT</string>
     <string name="multiplayer">MULTIPLAYER</string>
-    <string name="main_menu">MAIN MENU</string>    
+    <string name="main_menu">MAIN MENU</string>
+    <string name="multi_desc">Try to defend the enemy army before they destroy yours!</string>    
 </resources>
