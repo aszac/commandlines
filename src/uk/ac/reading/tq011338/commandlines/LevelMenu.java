@@ -1,5 +1,8 @@
 package uk.ac.reading.tq011338.commandlines;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +16,8 @@ import android.widget.LinearLayout;
 public class LevelMenu extends Activity {
 
 	private final int numberOfLevels = 6;
-	public static final String PREF_ENABLED_LEVEL = "enabled_level";
+	private static final String PREF_ENABLED_LEVEL = "enabled_level";
+	private List<Button> levelButtons = new ArrayList<Button>();
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,11 +61,22 @@ public class LevelMenu extends Activity {
 			} else {
 				button.setText("LEVEL " + (i));	
 				setSelectedLevelListener(button);
+				levelButtons.add(button);
 			}
 				
 			layout.addView(button);
 		}
 	}
+	
+	protected void onResume() {
+		super.onResume();
+		int enabledLevel = Integer.parseInt(checkEnabledLevel());
+		for (int i = 0; i <= enabledLevel; i++) {
+			levelButtons.get(i).setEnabled(true);
+		}
+	}
+
+
 
 	/**
 	 * OnClick start a new game, pass the selected level

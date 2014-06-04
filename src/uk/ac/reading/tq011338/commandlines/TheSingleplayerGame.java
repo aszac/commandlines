@@ -44,7 +44,7 @@ public class TheSingleplayerGame extends GameThread {
 	private int selected_level;
 	private JSONArray levelObjects;
 	private List<ActionFigure> figureListForTurns;
-
+	
 	/**
 	 * Constructor called from the activity call, passing the current activity
 	 * 
@@ -139,8 +139,6 @@ public class TheSingleplayerGame extends GameThread {
 	 * Sets the turn and initiates action for enemy figures
 	 */
 	public void checkTurn() {
-		checkIfGameOver();
-
 		// on start of the new turn
 		if (figureListForTurns.size() == 0) {
 			for (WorldObject figure : objectList) {
@@ -176,7 +174,13 @@ public class TheSingleplayerGame extends GameThread {
 		if (canvas == null)
 			return;
 
+		if (!wasHit) {
 		canvas.drawColor(Color.BLACK);
+		}
+		else {
+			canvas.drawColor(Color.RED);
+			wasHit = false;
+		}
 		for (int i = 0; i < mapSizeX; i++) {
 			for (int j = 0; j < mapSizeY; j++) {
 				canvas.drawBitmap(mGridTile, i * mGridSize, j * mGridSize, null);
@@ -278,7 +282,7 @@ public class TheSingleplayerGame extends GameThread {
 	 * 
 	 * @return game over - true / false
 	 */
-	private boolean checkIfGameOver() {
+	protected boolean checkIfGameOver() {
 		int numberOfFigures = 0;
 		int numberOfEnemyFigures = 0;
 		for (WorldObject object : objectList) {
@@ -302,12 +306,12 @@ public class TheSingleplayerGame extends GameThread {
 			String enabled_level = PreferenceManager
 					.getDefaultSharedPreferences(activity).getString(
 							PREF_ENABLED_LEVEL, null);
-			if (Integer.parseInt(enabled_level) == selected_level) {
+			if (Integer.parseInt(enabled_level) == selected_level-1) {
 				PreferenceManager
 						.getDefaultSharedPreferences(activity)
 						.edit()
 						.putString(PREF_ENABLED_LEVEL,
-								Integer.toString(selected_level + 1)).commit();
+								Integer.toString(selected_level)).commit();
 			}
 			showGameOverDialog(R.string.mode_win);
 			return true;

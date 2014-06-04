@@ -15,7 +15,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
 	private Handler mHandler;
 	private TextView mStatusView;
-	
+
 	
 	private volatile GameThread thread;
 

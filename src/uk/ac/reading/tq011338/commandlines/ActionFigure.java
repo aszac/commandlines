@@ -167,6 +167,7 @@ public class ActionFigure extends WorldObject {
 		AP = AP - (10 * force);
 		if (!checkIfOutOfBounds(direction)) {
 			// check if enemy present in the field && hit
+			mGameThread.wasHit = true;
 			switch (direction) {
 			case UP:
 				if (checkIfEnemyInGrid(x, y - 1)) {

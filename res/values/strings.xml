@@ -10,20 +10,22 @@
     <string name="figure">Action figure</string>
     <string name="mode_lose">You lost!</string>
     <string name="mode_win">You won!</string>
+    <string name="player1_win">Player1 won!</string>
+    <string name="player2_win">Player2 won!</string>
     <string name="restart_button">Restart Game</string>
     <string name="start">START</string>
     <string name="help">HELP</string>
     <string name="exit">EXIT</string>
     <string name="exit_button">Return to Menu</string>
     <string name="attackId">Attack</string>
-    <string name="attackText">attack(UP/DOWN/LEFT/RIGHT, TIMES);</string>
+    <string name="attackText">Attack the opponent in one of the directions UP/DOWN/LEFT/RIGHT\nattack({DIRECTION}, {TIMES});\ncost: 10</string>
     <string name="ok">OK</string>
     <string name="healId">Heal</string>
-    <string name="healText">heal(TIMES);</string>
+    <string name="healText">Heal your player = increase lost hit points\nheal({TIMES});\ncost: 10</string>
     <string name="defendId">Defend</string>
-    <string name="defendText">defend();</string>
+    <string name="defendText">Defend the agent from the enemy\ndefend();\ncost: 10</string>
     <string name="moveId">Move</string>
-    <string name="moveText">move(UP/DOWN/LEFT/RIGHT, TIMES);</string>
+    <string name="moveText">Move the player in one of the directions UP/DOWN/LEFT/RIGHT\nmove({DIRECTION}, {TIMES});\ncost: 10</string>
     <string-array name="list_of_commands">
         <item >UP,</item>
         <item >DOWN,</item>

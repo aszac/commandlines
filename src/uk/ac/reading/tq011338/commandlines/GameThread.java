@@ -20,6 +20,8 @@ public abstract class GameThread extends Thread {
 
 	protected int mMode = 1;
 	protected boolean isButtonClicked = false;
+	
+	public boolean wasHit = false;
 
 	public GameThread(GameView gameView, Activity activity) {
 		mSurfaceHolder = gameView.getHolder();
@@ -39,7 +41,8 @@ public abstract class GameThread extends Thread {
 				canvasRun = mSurfaceHolder.lockCanvas(null);
 				synchronized (mSurfaceHolder) {
 					drawWorld(canvasRun);
-					checkTurn();
+					checkIfGameOver();
+					checkTurn();			
 				}
 			} finally {
 				if (canvasRun != null) {
@@ -56,6 +59,7 @@ public abstract class GameThread extends Thread {
 		}
 	}
 
+	abstract protected boolean checkIfGameOver();
 	abstract protected void drawWorld(Canvas canvas);
 	abstract protected void checkTurn();
 	abstract protected void removeFigure(int x, int y);

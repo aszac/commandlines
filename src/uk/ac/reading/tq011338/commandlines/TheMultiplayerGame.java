@@ -192,7 +192,13 @@ public class TheMultiplayerGame extends GameThread {
 		if (canvas == null)
 			return;
 
+		if (!wasHit) {
 		canvas.drawColor(Color.BLACK);
+		}
+		else {
+			canvas.drawColor(Color.RED);
+			wasHit = false;
+		}
 		for (int i = 0; i < mapSizeX; i++) {
 			for (int j = 0; j < mapSizeY; j++) {
 				canvas.drawBitmap(mGridTile, i * mGridSize, j * mGridSize, null);
@@ -205,10 +211,10 @@ public class TheMultiplayerGame extends GameThread {
 			if (object instanceof Obstacle) {
 				canvas.drawBitmap(mTree, i * mGridSize, j * mGridSize, null);
 			} else if (!object.isPlayer1()) {
-				if (worldMap[i][j] != activeFigure) { // use different
+				if (object != activeFigure) { // use different
 					// bitmap
 					// if not selected
-					switch (worldMap[i][j].getState()) {
+					switch (object.getState()) {
 					case ATTACK:
 						canvas.drawBitmap(mAttack_player2, i * mGridSize, j
 								* mGridSize, null);
@@ -231,10 +237,10 @@ public class TheMultiplayerGame extends GameThread {
 				}
 
 			} else if (object.isPlayer1()) {
-				if (worldMap[i][j] != activeFigure) { // use different
-														// bitmap
+				if (object != activeFigure) { // use different
+													// bitmap
 					// if not selected
-					switch (worldMap[i][j].getState()) {
+					switch (object.getState()) {
 					case ATTACK:
 						canvas.drawBitmap(mAttack_player1, i * mGridSize, j
 								* mGridSize, null);
@@ -305,7 +311,7 @@ public class TheMultiplayerGame extends GameThread {
 	 * 
 	 * @return game over - true / false
 	 */
-	private boolean checkIfGameOver() {
+	protected boolean checkIfGameOver() {
 		int numberOfPlayer1Figures = 0;
 		int numberOfPlayer2Figures = 0;
 		for (WorldObject object : objectList) {
@@ -321,14 +327,14 @@ public class TheMultiplayerGame extends GameThread {
 		// check if any player 1 figures exist
 		if (numberOfPlayer1Figures == 0) {
 			this.setRunning(false);
-			showGameOverDialog(R.string.mode_lose);
+			showGameOverDialog(R.string.player2_win);
 			return true;
 		}
 
 		// check if any player 2 figures exist
 		if (numberOfPlayer2Figures == 0) {
 			this.setRunning(false);
-			showGameOverDialog(R.string.mode_win);
+			showGameOverDialog(R.string.player1_win);
 			return true;
 		}
 		return false;

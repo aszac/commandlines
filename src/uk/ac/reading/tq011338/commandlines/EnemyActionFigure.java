@@ -17,8 +17,12 @@ public class EnemyActionFigure extends ActionFigure {
 	 */
 	public void decideOnNextMove() {
 		targetEnemy = findClosestEnemy();
+		if (targetEnemy == null) {
+			return;
+		}
+		
 		Dijkstra dijkstra = new Dijkstra(mGameThread.worldMap);
-
+		
 		dijkstra.pathfinding(this.getX(), this.getY(), targetEnemy.getX(),
 				targetEnemy.getY());
 		int counter = 0;

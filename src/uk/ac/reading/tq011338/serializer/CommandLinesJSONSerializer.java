@@ -17,7 +17,6 @@ import org.json.JSONTokener;
 import uk.ac.reading.tq011338.commandlines.WorldObject;
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.util.Log;
 
 public class CommandLinesJSONSerializer {
 
