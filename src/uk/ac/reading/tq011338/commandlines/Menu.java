@@ -29,8 +29,8 @@ public class Menu extends Activity  {
 		helpButton = (Button) findViewById(R.id.helpButton);
 		helpButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-//				Intent helpStart = new Intent("uk.ac.reading.tq011338.commandlines.CommandLines");
-//				startActivity(helpStart);
+				Intent helpStart = new Intent("uk.ac.reading.tq011338.commandlines.HELP");
+				startActivity(helpStart);
 			}
 		});
 
